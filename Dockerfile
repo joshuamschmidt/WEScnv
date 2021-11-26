@@ -8,8 +8,8 @@ MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 RUN mkdir /tmp/install
 WORKDIR /tmp/install
 
-RUN apt update && apt upgrade && \
-	apt install curl gengetopt git libblas-dev libbz2-dev libcurl4-openssl-dev libc6-dev libncurses-dev lzma liblzma-dev nim perl python2 python3-venv python3-pip wget zlib1g-dev \
+RUN apt-get update && apt-get upgrade && \
+	apt-get install curl gengetopt git libblas-dev libbz2-dev libcurl4-openssl-dev libc6-dev libncurses-dev lzma liblzma-dev nim perl python2 python3-venv python3-pip wget zlib1g-dev \
 
 RUN git clone https://github.com/ebiggers/libdeflate.git && \
 	cd libdeflate && \
