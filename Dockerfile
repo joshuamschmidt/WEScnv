@@ -1,46 +1,39 @@
-FROM alpine:3.15
+FROM rocker/r-ver:4.1
+
+# rocker/r-ver is based on debian
+
 MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 
-RUN apk update && \
-	apk add bash && \
-	apk add gcc && \
-	apk add g++ && \
-	apk add make && \
-	apk add curl && \
-	apk add zlib && \
-	apk add zlib-dev && \
-	apk add libbz2 && \
-	apk add xz-dev && \
-	apk add libcurl && \
-	apk add libressl && \
-	apk add lapack && \
-	apk add libpthread-stubs && \
-	apk add gengetopt && \
-	apk add git && \
-	apk add nim && \
-	apk add perl && \
-	apk add python3 && \
-	apk add R && \
-	apk add bzip2-dev && \
-	apk add curl-dev && \
-	apk add ncurses-dev
+# create a working directory and work from there
+RUN mkdir /tmp/install
+WORKDIR /tmp/install
 
-WORKDIR /tmp
+RUN apt update && apt upgrade && \
+	apt install curl gengetopt git libblas-dev libbz2-dev libcurl4-openssl-dev libc6-dev libncurses-dev lzma liblzma-dev nim perl python2 python3-venv python3-pip wget zlib1g-dev \
+
+RUN git clone https://github.com/ebiggers/libdeflate.git && \
+	cd libdeflate && \
+	make && \
+	make install && \
+	make clean
 
 RUN wget -qO- https://github.com/samtools/htslib/releases/download/1.14/htslib-1.14.tar.bz2 | tar xvjf - && \
     cd htslib-1.14 && \
     make && \
-    make install
+    make install && \
+    make clean
 
 RUN wget -qO- https://github.com/samtools/samtools/releases/download/1.14/samtools-1.14.tar.bz2 | tar xvjf - && \
     cd samtools-1.14 && \
     make && \
-    make install
+    make install && \
+    make clean
 
 RUN wget -qO- https://github.com/samtools/bcftools/releases/download/1.14/bcftools-1.14.tar.bz2 | tar xvjf - && \
     cd bcftools-1.14 && \
     make && \
-    make install
+    make install && \
+    make clean
 
 RUN wget -qO- https://github.com/bedops/bedops/releases/download/v2.4.40/bedops_linux_x86_64-v2.4.40.tar.bz2 | tar xvjf - && \
 	cp bin/* /usr/local/bin
@@ -85,9 +78,25 @@ RUN git clone https://github.com/rgcgithub/clamms.git && \
 
 ENV CLAMMS_DIR=/usr/local/bin
 
-# CNVkit
+# Tools in R
+RUN install2.r -e data.table
+RUN install2.r -e BiocManager
+ENV BIOC /usr/local/lib/R/site-library/littler/examples
 
 # ExomeDepth
-RUN R -e "install.packages('ExomeDepth',dependencies=TRUE, repos='http://cran.rstudio.com/',lib='/usr/lib/R/library')"
+RUN "$BIOC"/installBioc.r Biostrings IRanges Rsamtools GenomicRanges GenomicAlignments
+RUN install2.r -e  ExomeDepth
 
-# Wise
+# CODEX2
+RUN "$BIOC"/installBioc.r CODEX
+
+# cn.MOPS
+RUN "$BIOC"/installBioc.r cn.mops
+
+# Tools in python
+# python3
+# CNVkit
+
+# python 2.7 
+#curl -sSL https://bootstrap.pypa.io/pip/2.7/get-pip.py -o get-pip.py
+# CONINFER
