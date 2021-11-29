@@ -8,8 +8,8 @@ MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 RUN mkdir /tmp/install
 WORKDIR /tmp/install
 
-RUN apt-get update && apt-get upgrade && \
-	apt-get install curl gengetopt git libblas-dev libbz2-dev libcurl4-openssl-dev libc6-dev libncurses-dev lzma liblzma-dev nim perl python2 python3-venv python3-pip wget zlib1g-dev \
+RUN apt-get update && apt-get upgrade -y && \
+	apt-get install -y curl gengetopt git libblas-dev libbz2-dev libcurl4-openssl-dev libc6-dev libncurses-dev lzma liblzma-dev perl python3-venv python3-pip wget zlib1g-dev 
 
 RUN git clone https://github.com/ebiggers/libdeflate.git && \
 	cd libdeflate && \
@@ -46,13 +46,17 @@ RUN wget https://github.com/brentp/mosdepth/releases/download/v0.3.2/mosdepth &&
 	chmod a+x mosdepth && \
 	mv mosdepth /usr/local/bin/
 
-RUN wget https://github.com/brentp/hts-nim/releases/download/v0.2.8/hts_nim_static_builder && \
-	chmod a+x hts_nim_static_builder && \
-	mv hts_nim_static_builder /usr/local/bin/
+# RUN wget https://github.com/brentp/hts-nim/releases/download/v0.2.8/hts_nim_static_builder && \
+# 	chmod a+x hts_nim_static_builder && \
+# 	mv hts_nim_static_builder /usr/local/bin/
 
-RUN apk add nimble && \
-	apk add lapack-dev
+RUN apt-get install -y liblapack-dev build-essential
 
+RUN curl https://nim-lang.org/choosenim/init.sh -sSf > init.sh && \
+	sh init.sh -y && \
+	rm init.sh
+
+ENV PATH=/root/.nimble/bin:$PATH
 RUN git clone https://github.com/brentp/hts-nim.git && \
 	cd hts-nim && \
 	nimble install -y
@@ -63,12 +67,12 @@ RUN git clone https://github.com/brentp/hts-nim-tools.git && \
  	mv hts_nim_tools /usr/local/bin/
 
 # CNV BINARIES
-# XHMM
+#XHMM
 RUN git clone https://bitbucket.org/statgen/xhmm.git && \
 	cd xhmm && \
 	make CXXFLAGS='-Wno-error=deprecated-declarations' && \
-	chmod a+x /tmp/xhmm/build/execs/xhmm && \
-	mv /tmp/xhmm/build/execs/xhmm /usr/local/bin/
+	chmod a+x /tmp/install/xhmm/build/execs/xhmm && \
+	mv /tmp/install/xhmm/build/execs/xhmm /usr/local/bin/
 
 # CLAMMS
 RUN git clone https://github.com/rgcgithub/clamms.git && \
@@ -88,10 +92,17 @@ RUN "$BIOC"/installBioc.r Biostrings IRanges Rsamtools GenomicRanges GenomicAlig
 RUN install2.r -e  ExomeDepth
 
 # CODEX2
+RUN apt-get install -y libxml2
 RUN "$BIOC"/installBioc.r CODEX
 
 # cn.MOPS
 RUN "$BIOC"/installBioc.r cn.mops
+
+RUN rm -rf ../downloaded_packages && \
+	rm -rf /tmp
+
+WORKDIR /app
+
 
 # Tools in python
 # python3
