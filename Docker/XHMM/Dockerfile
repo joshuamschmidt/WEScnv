@@ -40,7 +40,9 @@ FROM alpine:3.15
 
 RUN apk update && \
   apk upgrade && \
-  apk add bash
+  apk add bash && \
+  apk add lapack-dev && \
+  apk add libstdc++
 
 COPY --from=builder /usr/local/bin/xhmm /usr/local/bin/
 WORKDIR /app
