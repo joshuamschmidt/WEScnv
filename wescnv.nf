@@ -28,57 +28,9 @@ target_intervals = params.target_intervals
 usrgitc = "/usr/gitc/"
 
 
-if(params.target_intervals) {
-    target_intervals = file(params.target_intervals)
-    if(params.bait_intervals){
-        bait_intervals = file(params.bait_intervals)
-    } else {
-        bait_intervals = target_intervals
-    }
-} else {
-    target_intervals = params.target_intervals
-    bait_intervals = params.bait_intervals
-}
-
-if(target_intervals){
-    process GenerateSubsettedContaminationResources {
-        input:
-        file target_intervals
-
-        output:
-        set file("*UD"), file("*bed"), file("*mu") into SubsettedContamResources
-
-        script:
-        """
-        set -e -o pipefail
-        set -x
-
-        grep -vE "^@" ${target_intervals} | \
-            awk -v OFS='\\t' '\$2=\$2-1' | \
-            /app/bedtools intersect -c -a \${contamination_sites_bed} -b - | \
-            cut -f6 > new.${target_intervals}
-
-        function restrict_to_overlaps() {
-            # print lines from whole-genome file from loci with non-zero overlap
-            # with target intervals
-            WGS_FILE=\$1
-            EXOME_FILE=\$2
-            paste new.${target_intervals} \$WGS_FILE |
-            grep -Ev "^0" |
-            cut -f 2- > \$EXOME_FILE
-            echo "Generated \$EXOME_FILE"
-        }
-
-        restrict_to_overlaps \${contamination_sites_ud} "exome_\$(basename \${contamination_sites_ud})"
-        restrict_to_overlaps \${contamination_sites_bed} "exome_\$(basename \${contamination_sites_bed})"
-        restrict_to_overlaps \${contamination_sites_mu} "exome_\$(basename \${contamination_sites_mu})"
-        """
-    }
-}
-
 process mosdepthCounts {
 
-    publishDir "${params.outputDir}/MarkDuplicates/", mode: "${saveMode}" ,pattern: "*duplicate_metrics*"
+    publishDir "${params.outputDir}/CoverageSummary/", mode: "${saveMode}" ,pattern: "*mosdepth.summary.txt"
 
     input:
     each line from lines
