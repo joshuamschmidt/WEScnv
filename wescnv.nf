@@ -76,7 +76,7 @@ if(target_intervals){
     }
 }
 
-process FastqAndBwaAndSorMadup {
+process mosdepthCounts {
 
     publishDir "${params.outputDir}/MarkDuplicates/", mode: "${saveMode}" ,pattern: "*duplicate_metrics*"
 
