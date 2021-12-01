@@ -13,7 +13,7 @@ Channel
     .set { samples_ch }
 
 process foo {
-    publishDir "$params.outdir"
+    publishDir "$params.outputDir"
     input:
     set sampleId, file(read1), file(read2) from samples_ch
 
