@@ -60,6 +60,10 @@ optional.add_argument(
 parser.add_argument('files', metavar='FS', type=str, nargs='+',
                     help='files to convert')
 
+required.add_argument('suffix', metavar='SF', type=str, dest='file_suffix',
+                    help='common file suffix')
+parser.set_defaults(file_suffix=".bed.gz")
+
 optional.add_argument('--bed', type=str, dest='bed_file',
                        help='bed file with n cols, to form first n cols of output matrix',
                        default=None)
@@ -168,9 +172,10 @@ class BedFile():
 def main():
     args = parser.parse_args()
     match_string = SequenceMatcher(None, args.files[0], args.files[1]).find_longest_match(0, len(args.files[0]), 0, len(args.files[1]))
-    file_suffix = args.files[0][match_string.a: match_string.a + match_string.size]
-    assert all(file_suffix in file for file in args.files), "files have different suffixes"
-    counts=Counts(files=args.files,count_column=args.count_column, file_suffix=file_suffix)
+    #file_suffix = args.files[0][match_string.a: match_string.a + match_string.size]
+    #file_suffix = args.suffix
+    assert all(args.file_suffix in file for file in args.files), "files have different suffixes"
+    counts=Counts(files=args.files,count_column=args.count_column, file_suffix=args.file_suffix)
     if args.bed_file is not None:
         bed = BedFile(args.bed_file)
     
