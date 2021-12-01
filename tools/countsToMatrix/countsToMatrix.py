@@ -152,7 +152,7 @@ class BedFile():
         self.read_bed()
         self.n_rows = len(self.bed_data.index)
         self.first_key = str(self.bed_data.iloc[0,0]) + "_" + str(self.bed_data.iloc[0,1])
-        #self.kb_lengths = (self.bed_data.iloc[:,2].values - self.bed_data.iloc[:,1].values)/1000
+        self.kb_lengths = (self.bed_data.iloc[:,2].values - self.bed_data.iloc[:,1].values)/1000
     
     def read_bed(self):
         first_line = pd.read_csv(self.bed_file, sep='\t', header=None, nrows=1)

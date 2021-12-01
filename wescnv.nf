@@ -69,7 +69,7 @@ countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 process aggregateCoverage {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*coverage_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov"
 
     input:
     file '*.regions.bed.gz' from coverageOutChannel.collect()
@@ -92,7 +92,7 @@ process aggregateCoverage {
 process aggregateCounts {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov"
     input:
     file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
 
@@ -113,7 +113,7 @@ process aggregateCounts {
 process aggregateFpkm {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*fpkm_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov"
 
     input:
     file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
