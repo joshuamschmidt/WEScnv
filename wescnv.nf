@@ -8,8 +8,6 @@ params.inputFile = 'inputFile.txt'
 inputFile = file(params.inputFile)
 lines = inputFile.readLines()
 
-samples_ch.into { samples_to_coverage_ch; samples_to_counts_ch }
-
 process cramCoverage {
 
     label 'bamTasks'
