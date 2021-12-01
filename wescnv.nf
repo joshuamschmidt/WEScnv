@@ -11,6 +11,8 @@ Channel
     .map{ row-> tuple(val(row.sample_id), file(row.input_cram), file(row.input_crai)) }
     .set { samples_ch }
 
+samples_ch.into { samples_to_coverage_ch; samples_to_counts_ch }
+
 process cramCoverage {
 
     label 'bamTasks'
@@ -44,7 +46,7 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from samples_to_depth_ch
+    set sample_id, file(input_cram), file(input_crai) from samples_to_counts_ch
 
     output:
     file "${output_counts_filename}" into { countsOutChannel }
