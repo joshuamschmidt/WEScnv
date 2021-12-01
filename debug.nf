@@ -18,6 +18,6 @@ process foo {
 
     script:
     """
-    echo your_command --sample $sampleId --reads $read1 $read2
+    echo "your_command --sample $sampleId --reads $read1 $read2" > $sampleId.txt
     """
 }
