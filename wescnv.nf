@@ -4,10 +4,11 @@
 params.outputDir = 'run/'
 params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
+params.batch = 'batch01'
 
 inputFile = file(params.inputFile)
 lines = inputFile.readLines()
-
+batch = params.batch
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
     label 'bamTasks'
@@ -72,7 +73,7 @@ process aggregateCoverage {
     file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    "batch_1.coverage_MS-GC.GC5-DF-SD.bed.gz"
+    "$batch.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
@@ -80,8 +81,7 @@ process aggregateCoverage {
     countsToMatrix.py *.regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
-    | gzip > batch_1.coverage_MS-GC.GC5-DF-SD.bed.gz
-
+    | gzip > "$batch".coverage_MS-GC.GC5-DF-SD.bed.gz
     """
 }
 
@@ -94,7 +94,7 @@ process aggregateCounts {
     file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
 
     output:
-    "batch_1.counts_MS-GC.GC5-DF-SD.bed.gz"
+    "$batch.counts_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
@@ -102,8 +102,7 @@ process aggregateCounts {
     countsToMatrix.py *.cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
-    | gzip > batch_1.counts_MS-GC.GC5-DF-SD.bed.gz
-
+    | gzip > "$batch".counts_MS-GC.GC5-DF-SD.bed.gz
     """
 }
 
@@ -116,7 +115,7 @@ process aggregateFpkm {
     file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
 
     output:
-    "batch_1.fpkm_MS-GC.GC5-DF-SD.bed.gz"
+    "$batch.fkpm_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
@@ -125,6 +124,6 @@ process aggregateFpkm {
     --bed \${target_bed} \
     --fpkm \
     --merge-bed \
-    | gzip > batch_1.fpkm_MS-GC.GC5-DF-SD.bed.gz
+    | gzip > "$batch".fkpm_MS-GC.GC5-DF-SD.bed.gz
     """
 }
