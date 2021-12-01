@@ -76,7 +76,7 @@ process aggregateCoverage {
     file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch
+    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch
 
     script:
     """
@@ -98,7 +98,7 @@ process aggregateCounts {
     file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
 
     output:
-    "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
+    file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
@@ -119,7 +119,7 @@ process aggregateFpkm {
     file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
 
     output:
-    "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"
+    file "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
