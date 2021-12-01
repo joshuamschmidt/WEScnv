@@ -76,7 +76,7 @@ process aggregateCoverage {
     file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch()
+    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
