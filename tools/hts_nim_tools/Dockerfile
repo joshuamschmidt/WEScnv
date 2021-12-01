@@ -3,8 +3,6 @@ FROM alpine:3.15
 
 MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 
-
-
 RUN apk update && \
  apk upgrade && \
  apk add bash
