@@ -62,7 +62,7 @@ process cramCounts {
     --threads $task.cpus \
     \${target_bed} $input_cram \
     | sort -k1,1 -k2,2n \
-    | gzip > "$sample_id".CPT.txt.gz
+    | gzip > "$sample_id".cpt.bed.gz
     """
 }
 

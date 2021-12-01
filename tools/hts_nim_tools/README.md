@@ -14,4 +14,4 @@ This image is based on hts_nim_tools from Pederson: []
 --fasta Homo_sapiens_assembly38.fasta \
 --mapq 20 \
 gencode.v38.AUTO-ALL-EXONS-1TPG-MERGED-50bp_MS-GC.GC5-DF-SD.bed \
-C6DAUANXX_3_ACG048_4.cram"`
+C6DAUANXX_3_ACG048_4.cram | sort -k1,1 -k2,2n | gzip > ACG048_4.cpt.txt.gz"`
