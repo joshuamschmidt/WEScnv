@@ -76,7 +76,7 @@ process aggregateCoverage {
     file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch
+    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch()
 
     script:
     """
@@ -139,7 +139,7 @@ process aggregateFpkm {
 */
 
 
-process filterCounts {
+/*process filterCounts {
 
     input:
     file '*counts*.gz' from aggCountsOut_ch()
@@ -148,3 +148,4 @@ process filterCounts {
     "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
 
 }
+*/
