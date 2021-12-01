@@ -4,6 +4,7 @@ FROM alpine:3.15 AS builder
 MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 
 RUN apk update && \
+  apk add upgrade && \
   apk add bash && \
   apk add gcc && \
   apk add g++ && \

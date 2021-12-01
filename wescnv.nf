@@ -13,7 +13,7 @@ Channel
 
 process cramCoverage {
 
-    publishDir "${params.outputDir}/CoverageSummary/", mode: "${saveMode}" ,pattern: "*mosdepth.summary.txt", overwrite: false
+    label 'bamTasks'
 
     input:
     set sample_id, file(input_cram), file(input_crai) from samples_to_coverage_ch
@@ -32,8 +32,8 @@ process cramCoverage {
     cp $input_cram \${TMPDIR}/
     cp $input_crai \${TMPDIR}/
 
-    mosdepth --fasta Homo_sapiens_assembly38.fasta \
-    --by gencode.v38.AUTO-ALL-EXONS-1TPG-MERGED-50bp_MS-GC.GC5-DF-SD.bed \
+    mosdepth --fasta \${ref_fasta} \
+    --by \${target_bed} \
     --no-per-base \
     --mapq 25 \
     --threads $task.cpus \
@@ -43,6 +43,8 @@ process cramCoverage {
 }
 
 process cramCounts {
+
+    label 'bamTasks'
 
     input:
     set sample_id, file(input_cram), file(input_crai) from samples_to_depth_ch
@@ -60,14 +62,29 @@ process cramCounts {
     cp $input_cram \${TMPDIR}/
     cp $input_crai \${TMPDIR}/
 
-    hts_nim_tools count-reads --fasta GRCh38_full_analysis_set_plus_decoy_hla.fa \
+    hts_nim_tools count-reads \
+    --fasta \${ref_fasta} \
     --mapq 25 \
     --threads $task.cpus \
-    gencode.v38.AUTO-ALL-EXONS-1TPG-MERGED-50bp_MS-GC.GC5-DF-SD.bed $input_cram \
+    \${target_bed} $input_cram \
     | sort -k1,1 -k2,2n \
     | gzip > "$sample_id".CPT.txt.gz
     """
 }
+
+
+/*
+counts = Channel.fromPath( '/some/path/*.fa' )
+
+process blastThemAll {
+  input:
+  file counts
+
+  "blastp -query $counts -db nr"
+
+}
+
+*/
 
 /*
 process aggregateCounts {
