@@ -142,7 +142,7 @@ process aggregateFpkm {
 process filterCounts {
 
     input:
-    file *counts*.gz from aggCountsOut_ch
+    file *counts*.gz from aggCountsOut_ch()
 
     output:
     "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
