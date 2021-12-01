@@ -13,7 +13,7 @@ Channel
     .set { samples_ch }
 
 process foo {
-    publishDir "$params.outputDir"
+    publishDir "$params.outdir/$sampleId"
     input:
     set sampleId, file(read1), file(read2) from samples_ch
 
@@ -22,6 +22,6 @@ process foo {
 
     script:
     """
-    echo your_command --sample $sampleId --reads $read1 $read2 > ${sampleId}.txt
+    echo $sampleId $read1 $read2 > test.txt
     """
 }
