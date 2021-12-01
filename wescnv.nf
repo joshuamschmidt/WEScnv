@@ -24,8 +24,6 @@ process cramCoverage {
     sample_id = list[0]
     input_cram = list[1]
     input_crai = list[2]
-    output_coverage_filename = "${sample_id}.regions.bed.gz"
-    coverage_summary_filename = "${sample_id}.mosdepth.summary.txt"
     """
     mosdepth --fasta \${ref_fasta} \
     --by \${target_bed} \
@@ -52,7 +50,6 @@ process cramCounts {
     sample_id = list[0]
     input_cram = list[1]
     input_crai = list[2]
-    output_counts_filename = "${sample_id}.cpt.bed.gz"
     """
     hts_nim_tools count-reads \
     --fasta \${ref_fasta} \
@@ -64,56 +61,67 @@ process cramCounts {
     """
 }
 
-coverageOutChannel
-        .view()
+countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
+process aggregateCoverge {
+    label 'combineTasks'
 
-countsOutChannel
-        .view()
-
-/*
-counts = Channel.fromPath( '/some/path/*.fa' )
-
-process blastThemAll {
-  input:
-  file counts
-
-  "blastp -query $counts -db nr"
-
-}
-
-*/
-
-/*
-process aggregateCounts {
+    publishDir "$params.outdir/CombinedCov", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
 
     input:
-    file '*.CPT.txt.gz' from nimtoolsCountsOutChannel.collect()
+    file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    set val(ius), file("${recalibration_report_filename}") into BaseRecalOut
+    "batch_1.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
-    sequence_group_interval = sequence_group_interval_all.get(i).toString()
-    if ( i < 10 ) {
-        recalibration_report_filename = "${ius}.0${i}.recal_data.csv"
-    } else {
-        recalibration_report_filename = "${ius}.${i}.recal_data.csv"
-    }
     """
-    gatk --java-options "-XX:GCTimeLimit=50 -XX:GCHeapFreeLimit=10 -XX:+PrintFlagsFinal \
-        -XX:+PrintGCTimeStamps -XX:+PrintGCDateStamps -XX:+PrintGCDetails \
-        -Xloggc:gc_log.log -Xms4000m" \
-        BaseRecalibrator \
-        -R \${ref_fasta} \
-        -I ${input_bam} \
-        --use-original-qualities \
-        -O ${recalibration_report_filename} \
-        -known-sites \${dbSNP_vcf} \
-        -known-sites \${known_indels_sites_Gold} \
-        -known-sites \${known_indels_sites_assembly38} \
-        -L \$(echo ${sequence_group_interval} | sed 's/ / -L /g')
+    python countsToMatrix.py *.regions.bed.gz \
+    --bed \${target_bed} \
+    --merge-bed \
+    | gzip > batch_1.coverage_MS-GC.GC5-DF-SD.bed.gz
+
     """
 }
-*/
 
+
+process aggregateCounts {
+    label 'combineTasks'
+
+    publishDir "$params.outdir/CombinedCov", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
+    input:
+    file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
+
+    output:
+    "batch_1.counts_MS-GC.GC5-DF-SD.bed.gz"
+
+    script:
+    """
+    python countsToMatrix.py *.cpt.bed.gz \
+    --bed \${target_bed} \
+    --merge-bed \
+    | gzip > batch_1.counts_MS-GC.GC5-DF-SD.bed.gz
+
+    """
+}
+
+process aggregateFpkm {
+    label 'combineTasks'
+
+    publishDir "$params.outdir/CombinedCov", pattern: "*fpkm_MS-GC.GC5-DF-SD.bed.gz"
+
+    input:
+    file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
+
+    output:
+    "batch_1.fpkm_MS-GC.GC5-DF-SD.bed.gz"
+
+    script:
+    """
+    python countsToMatrix.py *.cpt.bed.gz \
+    --bed \${target_bed} \
+    --fpkm \
+    --merge-bed \
+    | gzip > batch_1.fpkm_MS-GC.GC5-DF-SD.bed.gz
+    """
+}
