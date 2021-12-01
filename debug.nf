@@ -18,10 +18,10 @@ process foo {
     set sampleId, file(read1), file(read2) from samples_ch
 
     output:
-    file "$sampleId.txt"
+    file '*.txt'
 
     script:
     """
-    echo your_command --sample $sampleId --reads $read1 $read2
+    echo your_command --sample $sampleId --reads $read1 $read2 > ${sampleId}.txt
     """
 }
