@@ -76,7 +76,7 @@ process aggregateCoverge {
 
     script:
     """
-    python countsToMatrix.py *.regions.bed.gz \
+    countsToMatrix.py *.regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
     | gzip > batch_1.coverage_MS-GC.GC5-DF-SD.bed.gz
@@ -97,7 +97,7 @@ process aggregateCounts {
 
     script:
     """
-    python countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py *.cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
     | gzip > batch_1.counts_MS-GC.GC5-DF-SD.bed.gz
@@ -118,7 +118,7 @@ process aggregateFpkm {
 
     script:
     """
-    python countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py *.cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
     --merge-bed \
