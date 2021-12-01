@@ -1,8 +1,8 @@
 #!/usr/bin/env nextflow
 
 // default params
-params.outputDir = "run/"
-params.saveMode = "copy"
+params.outputDir = 'run/'
+params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 
 Channel
