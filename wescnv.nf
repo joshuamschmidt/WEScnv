@@ -5,11 +5,8 @@ params.outputDir = 'run/'
 params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 
-Channel
-    .fromPath(params.inputFile)
-    .splitCsv(header:false)
-    .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
-    .set { samples_ch }
+inputFile = file(params.inputFile)
+lines = inputFile.readLines()
 
 samples_ch.into { samples_to_coverage_ch; samples_to_counts_ch }
 
@@ -18,12 +15,16 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from samples_to_coverage_ch
+    each line from lines
 
     output:
     file "${output_coverage_filename}" into { coverageOutChannel }
 
     script:
+    list = line.split('\t')
+    sample_id = list[0]
+    input_cram = list[1]
+    input_crai = list[2]
     output_coverage_filename = "${sample_id}.regions.bed.gz"
     coverage_summary_filename = "${sample_id}.mosdepth.summary.txt"
     """
@@ -42,12 +43,16 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from samples_to_counts_ch
+    each line from lines
 
     output:
     file "${output_counts_filename}" into { countsOutChannel }
 
     script:
+    list = line.split('\t')
+    sample_id = list[0]
+    input_cram = list[1]
+    input_crai = list[2]
     output_counts_filename = "${sample_id}.CPT.txt.gz"
     """
     hts_nim_tools count-reads \
