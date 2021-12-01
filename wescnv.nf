@@ -63,7 +63,7 @@ process cramCounts {
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
-process aggregateCoverge {
+process aggregateCoverage {
     label 'combineTasks'
 
     publishDir "$params.outdir/CombinedCov", pattern: "*coverage_MS-GC.GC5-DF-SD.bed.gz"
@@ -76,6 +76,7 @@ process aggregateCoverge {
 
     script:
     """
+    set -euo pipefail
     countsToMatrix.py *.regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -97,6 +98,7 @@ process aggregateCounts {
 
     script:
     """
+    set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -118,6 +120,7 @@ process aggregateFpkm {
 
     script:
     """
+    set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
