@@ -39,6 +39,7 @@ process cramCoverage {
 }
 
 process cramCounts {
+    publishDir "$params.outdir/CombinedCov/"
 
     label 'bamTasks'
 
@@ -67,9 +68,9 @@ process cramCounts {
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
 process aggregateCoverage {
-    label 'combineTasks'
+    publishDir "$params.outdir/CombinedCov/"
 
-    publishDir "$params.outdir/CombinedCov"
+    label 'combineTasks'
 
     input:
     file '*.regions.bed.gz' from coverageOutChannel.collect()
@@ -90,9 +91,10 @@ process aggregateCoverage {
 
 
 process aggregateCounts {
+    publishDir "$params.outdir/CombinedCov/"
+
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov"
     input:
     file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
 
