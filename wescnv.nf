@@ -81,6 +81,7 @@ process aggregateCoverage {
     """
     set -euo pipefail
     countsToMatrix.py *.regions.bed.gz \
+    --suffix .regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
     | gzip > "$batch".coverage_MS-GC.GC5-DF-SD.bed.gz
@@ -102,6 +103,7 @@ process aggregateCounts {
     """
     set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
+    --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
     | gzip > "$batch".counts_MS-GC.GC5-DF-SD.bed.gz
@@ -123,6 +125,7 @@ process aggregateFpkm {
     """
     set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
+    --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
     --merge-bed \
