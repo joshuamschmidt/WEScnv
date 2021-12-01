@@ -60,6 +60,12 @@ process cramCounts {
     """
 }
 
+coverageOutChannel
+        .view()
+
+
+countsOutChannel
+        .view()
 
 /*
 counts = Channel.fromPath( '/some/path/*.fa' )
