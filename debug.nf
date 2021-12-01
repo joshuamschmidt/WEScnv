@@ -5,23 +5,24 @@ params.outputDir = 'run/'
 params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 
-
-Channel
-    .fromPath(params.inputFile)
-    .splitCsv(header:true, sep:"\t")
-    .map{ row-> tuple(row.sampleId, file(row.read1), file(row.read2)) }
-    .set { samples_ch }
+inputFile = file(params.inputFile)
+lines = inputFile.readLines()
 
 process foo {
-    publishDir "$params.outdir/$sampleId"
+    publishDir "$params.outdir/$sampleId", ,pattern: "*.txt"
     input:
-    set sampleId, file(read1), file(read2) from samples_ch
+    each line from lines
 
     output:
     file '*.txt'
 
     script:
+    list = line.split('\t')
+    sampleId = list[0]
+    cram = list[1]
+    crai = list[2]
+
     """
-    echo $sampleId $read1 $read2 > test.txt
+    echo $sampleId $cram $crai > test.txt
     """
 }
