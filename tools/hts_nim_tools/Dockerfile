@@ -8,5 +8,5 @@ RUN apk update && \
  apk add bash
 
 COPY hts_nim_tools /usr/local/bin/
-WORKDIR /app
+WORKDIR /data
 
