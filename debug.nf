@@ -9,7 +9,7 @@ inputFile = file(params.inputFile)
 lines = inputFile.readLines()
 
 process foo {
-    publishDir "$params.outdir/$sampleId", ,pattern: "*.txt"
+    publishDir "$params.outdir/$sampleId", pattern: "*.txt"
     input:
     each line from lines
 
