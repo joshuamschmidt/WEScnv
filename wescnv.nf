@@ -76,11 +76,10 @@ process aggregateCoverage {
     file '*.regions.bed.gz' from coverageOutChannel.collect()
 
     output:
-    "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
+    "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz" into aggCountsOut_ch
 
     script:
     """
-    set -euo pipefail
     countsToMatrix.py *.regions.bed.gz \
     --suffix .regions.bed.gz \
     --bed \${target_bed} \
@@ -103,7 +102,6 @@ process aggregateCounts {
 
     script:
     """
-    set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
@@ -125,7 +123,6 @@ process aggregateFpkm {
 
     script:
     """
-    set -euo pipefail
     countsToMatrix.py *.cpt.bed.gz \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
@@ -133,4 +130,21 @@ process aggregateFpkm {
     --merge-bed \
     | gzip > "$batch".fkpm_MS-GC.GC5-DF-SD.bed.gz
     """
+}
+
+
+/*
+* Now, Let's take the counts file and determine which exons to remove due to consistently no data
+*
+*/
+
+
+process filterCounts {
+
+    input:
+    file *counts*.gz from aggCountsOut_ch
+
+    output:
+    "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
+
 }
