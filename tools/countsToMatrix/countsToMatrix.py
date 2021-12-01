@@ -152,17 +152,17 @@ class BedFile():
         self.read_bed()
         self.n_rows = len(self.bed_data.index)
         self.first_key = str(self.bed_data.iloc[0,0]) + "_" + str(self.bed_data.iloc[0,1])
-        self.kb_lengths = (self.bed_data.iloc[:,2].values - self.bed_data.iloc[:,1].values)/1000
+        #self.kb_lengths = (self.bed_data.iloc[:,2].values - self.bed_data.iloc[:,1].values)/1000
     
     def read_bed(self):
         first_line = pd.read_csv(self.bed_file, sep='\t', header=None, nrows=1)
         first_value = first_line.iloc[0,0]
         if first_value=='chr' or first_value=='Chr' or first_value=='CHR':
-             self.bed_data = pd.read_csv(self.bed_file, sep='\t',dtype=object)
+             self.bed_data = pd.read_csv(self.bed_file, sep='\t')
              n1, n2 = list(self.bed_data.columns)[1:3]
              self.bed_data = self.bed_data.astype({n1: int, n2: int})
         else:
-            self.bed_data = pd.read_csv(self.bed_file, sep='\t',header=None,dtype=object)
+            self.bed_data = pd.read_csv(self.bed_file, sep='\t',header=None)
             col_names = list(self.bed_data.columns)
             col_names = ["user_"+str(name+1) for name in  col_names]
             col_names[0:3] = 'chr', 'start', 'end'
