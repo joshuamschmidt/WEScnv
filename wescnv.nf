@@ -12,7 +12,7 @@ lines = inputFile.readLines()
 
 batch = params.batch
 process cramCoverage {
-    publishDir "$params.outdir/CoverageSummary", mode: "${saveMode}", pattern: "*.summary.txt"
+    publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
     label 'bamTasks'
 
     input:
