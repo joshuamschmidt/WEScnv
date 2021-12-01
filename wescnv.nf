@@ -9,7 +9,7 @@ Channel
     .fromPath(params.inputFile)
     .splitCsv(header:false, sep:'\t', strip: true)
     .map{ row-> tuple(val(row.sample_id), file(row.input_cram), file(row.input_crai)) }
-    .set { samples_to_coverage_ch, samples_to_counts_ch }
+    .set { samples_ch }
 
 process cramCoverage {
 
