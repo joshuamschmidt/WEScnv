@@ -17,6 +17,7 @@ process cramCoverage {
 
     output:
     file "${sample_id}.regions.bed.gz" into coverageOutChannel
+    file "${sample_id}.mosdepth.summary.txt"
 
     script:
     list = line.split('\t')
