@@ -9,7 +9,7 @@ inputFile = file(params.inputFile)
 lines = inputFile.readLines()
 
 process cramCoverage {
-
+    publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
     label 'bamTasks'
 
     input:
