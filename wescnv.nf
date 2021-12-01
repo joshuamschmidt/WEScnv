@@ -66,7 +66,7 @@ countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 process aggregateCoverge {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov", pattern: "*coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     input:
     file '*.regions.bed.gz' from coverageOutChannel.collect()
