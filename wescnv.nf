@@ -7,7 +7,7 @@ params.inputFile = 'inputFile.txt'
 
 Channel
     .fromPath(params.inputFile)
-    .splitCsv(header:false, sep:'\t', strip: true)
+    .splitCsv(header:false)
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
     .set { samples_ch }
 
