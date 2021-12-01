@@ -44,7 +44,7 @@ process cramCounts {
     each line from lines
 
     output:
-    file "${sample_id}.cpt.bed.gz" into { countsOutChannel }
+    file "${sample_id}.cpt.bed.gz" into countsOutChannel
 
     script:
     list = line.split('\t')
