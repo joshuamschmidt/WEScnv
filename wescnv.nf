@@ -6,11 +6,13 @@ params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
 
+// TODO: create input file channel
 inputFile = file(params.inputFile)
 lines = inputFile.readLines()
+
 batch = params.batch
 process cramCoverage {
-    publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
+    publishDir "$params.outdir/CoverageSummary", mode: "${saveMode}", pattern: "*.summary.txt"
     label 'bamTasks'
 
     input:
@@ -67,7 +69,7 @@ countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 process aggregateCoverage {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*coverage_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov", mode: "${saveMode}", pattern: "*coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     input:
     file '*.regions.bed.gz' from coverageOutChannel.collect()
@@ -89,7 +91,7 @@ process aggregateCoverage {
 process aggregateCounts {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov", mode: "${saveMode}", pattern: "*counts_MS-GC.GC5-DF-SD.bed.gz"
     input:
     file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
 
@@ -109,7 +111,7 @@ process aggregateCounts {
 process aggregateFpkm {
     label 'combineTasks'
 
-    publishDir "$params.outdir/CombinedCov", pattern: "*fpkm_MS-GC.GC5-DF-SD.bed.gz"
+    publishDir "$params.outdir/CombinedCov", mode: "${saveMode}", pattern: "*fpkm_MS-GC.GC5-DF-SD.bed.gz"
 
     input:
     file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
