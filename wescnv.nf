@@ -24,10 +24,6 @@ process cramCoverage {
     file "${output_coverage_filename}" into { coverageOutChannel }
 
     script:
-    list = line.split('\t')
-    sample_id = list[0]
-    input_cram = list[1]
-    input_crai = list[2]
     output_coverage_filename = "${sample_id}.regions.bed.gz"
     coverage_summary_filename = "${sample_id}.mosdepth.summary.txt"
     """
@@ -52,10 +48,6 @@ process cramCounts {
     file "${output_counts_filename}" into { countsOutChannel }
 
     script:
-    list = line.split('\t')
-    sample_id = list[0]
-    input_cram = list[1]
-    input_crai = list[2]
     output_counts_filename = "${sample_id}.CPT.txt.gz"
     """
     hts_nim_tools count-reads \
