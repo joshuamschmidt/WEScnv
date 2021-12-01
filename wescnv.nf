@@ -13,6 +13,7 @@ lines = inputFile.readLines()
 batch = params.batch
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
+
     label 'bamTasks'
 
     input:
@@ -39,7 +40,6 @@ process cramCoverage {
 }
 
 process cramCounts {
-    publishDir "$params.outdir/CombinedCov/"
 
     label 'bamTasks'
 
@@ -68,7 +68,7 @@ process cramCounts {
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
 process aggregateCoverage {
-    publishDir "$params.outdir/CombinedCov/"
+    publishDir "$params.outdir/CombinedCov/", pattern: "*coverage*"
 
     label 'combineTasks'
 
@@ -91,7 +91,7 @@ process aggregateCoverage {
 
 
 process aggregateCounts {
-    publishDir "$params.outdir/CombinedCov/"
+    publishDir "$params.outdir/CombinedCov/", pattern: "*counts*"
 
     label 'combineTasks'
 
@@ -113,9 +113,9 @@ process aggregateCounts {
 }
 
 process aggregateFpkm {
-    label 'combineTasks'
+    publishDir "$params.outdir/CombinedCov", pattern: "*fkpm*"
 
-    publishDir "$params.outdir/CombinedCov"
+    label 'combineTasks'
 
     input:
     file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
