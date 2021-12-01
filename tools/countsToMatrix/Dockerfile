@@ -12,4 +12,8 @@ COPY . .
 
 WORKDIR /data
 
-COPY countsToMatrix.py /data
+CMD ["/bin/bash"]
+
+COPY countsToMatrix.py /usr/local/bin
+
+RUN chmod +x /usr/local/bin/countsToMatrix.py
