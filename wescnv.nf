@@ -29,9 +29,6 @@ process cramCoverage {
     output_coverage_filename = "${sample_id}.regions.bed.gz"
     coverage_summary_filename = "${sample_id}.mosdepth.summary.txt"
     """
-    cp $input_cram \${TMPDIR}/
-    cp $input_crai \${TMPDIR}/
-
     mosdepth --fasta \${ref_fasta} \
     --by \${target_bed} \
     --no-per-base \
@@ -59,9 +56,6 @@ process cramCounts {
     input_crai = list[2]
     output_counts_filename = "${sample_id}.CPT.txt.gz"
     """
-    cp $input_cram \${TMPDIR}/
-    cp $input_crai \${TMPDIR}/
-
     hts_nim_tools count-reads \
     --fasta \${ref_fasta} \
     --mapq 25 \
