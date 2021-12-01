@@ -60,7 +60,7 @@ optional.add_argument(
 parser.add_argument('files', metavar='FS', type=str, nargs='+',
                     help='files to convert')
 
-required.add_argument('suffix', metavar='SF', type=str, dest='file_suffix',
+required.add_argument('--suffix', type=str, dest='file_suffix',
                     help='common file suffix')
 parser.set_defaults(file_suffix=".bed.gz")
 
