@@ -111,7 +111,7 @@ process aggregateCounts {
 
     script:
     """
-    countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py * \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
