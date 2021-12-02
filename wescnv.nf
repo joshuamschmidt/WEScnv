@@ -73,7 +73,7 @@ process aggregateCoverage {
     label 'combineTasks'
 
     input:
-    file '*.regions.bed.gz' from coverageOutChannel.collect()
+    file '*.regions.bed.gz' from coverageOutChannel.toSortedList()
 
     output:
     file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
@@ -95,7 +95,7 @@ process aggregateCounts {
     label 'combineTasks'
 
     input:
-    file '*.cpt.bed.gz' from aggregateCounts_ch.collect()
+    file '*.cpt.bed.gz' from aggregateCounts_ch.toSortedList()
 
     output:
     file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
@@ -116,7 +116,7 @@ process aggregateFpkm {
     label 'combineTasks'
 
     input:
-    file '*.cpt.bed.gz' from aggregateFpkm_ch.collect()
+    file '*.cpt.bed.gz' from aggregateFpkm_ch.toSortedList()
 
     output:
     file "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"

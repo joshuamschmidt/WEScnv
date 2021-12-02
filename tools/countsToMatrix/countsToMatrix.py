@@ -125,10 +125,6 @@ class Counts():
             self.sample_names.append(file.removesuffix(self.file_suffix))
     
     def convert_to_fkpm(self,bedObject):
-        #with open(self.files[0]) as f:
-        #    first_line = f.readline().strip()
-        #    first_array = first_line.split("\t")
-        #    self.first_key = str(first_array[0]) + "_" + str(first_array[1])
         assert self.first_key == bedObject.first_key, f"count files are not sorted in the same order as the bed file. File key: {self.first_key}, Bed key: {bedObject.first_key}"
         assert self.n_rows == bedObject.n_rows, f"count files and bed file differ in nummber of features. File: {self.n_rows}, Bed: {bedObject.n_rows}" 
         perM_scaling_factors = self.count_array.sum(axis=0) / 1e6
@@ -172,8 +168,6 @@ class BedFile():
 def main():
     args = parser.parse_args()
     match_string = SequenceMatcher(None, args.files[0], args.files[1]).find_longest_match(0, len(args.files[0]), 0, len(args.files[1]))
-    #file_suffix = args.files[0][match_string.a: match_string.a + match_string.size]
-    #file_suffix = args.suffix
     assert all(args.file_suffix in file for file in args.files), "files have different suffixes"
     counts=Counts(files=args.files,count_column=args.count_column, file_suffix=args.file_suffix)
     if args.bed_file is not None:
