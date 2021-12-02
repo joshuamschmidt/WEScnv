@@ -89,7 +89,7 @@ process aggregateCoverage {
 
     script:
     """
-    countsToMatrix.py * \
+    countsToMatrix.py *.regions.bed.gz \
     --suffix .regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -111,7 +111,7 @@ process aggregateCounts {
 
     script:
     """
-    countsToMatrix.py * \
+    countsToMatrix.py *.cpt.bed.gz \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -132,7 +132,7 @@ process aggregateFpkm {
 
     script:
     """
-    countsToMatrix.py * \
+    countsToMatrix.py *.cpt.bed.gz \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
