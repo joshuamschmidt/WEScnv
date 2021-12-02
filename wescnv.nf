@@ -6,10 +6,6 @@ params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
 
-// TODO: create input file channel
-// inputFile = file(params.inputFile)
-// lines = inputFile.readLines()
-
 Channel
     .fromPath(params.inputFile)
     .splitCsv(header:true, sep:'\t')
@@ -25,17 +21,12 @@ process cramCoverage {
 
     input:
     set sample_id, file(input_cram), file(input_crai) from coverageInChannel
-    //each line from lines
 
     output:
-    file "${sample_id}.regions.bed.gz" into coverageOutChannel
+    file "*regions.bed.gz" into coverageOutChannel
     file "${sample_id}.mosdepth.summary.txt"
 
     script:
-    //list = line.split('\t')
-    //sample_id = list[0]
-    //input_cram = list[1]
-    //input_crai = list[2]
     """
     mosdepth --fasta \${ref_fasta} \
     --by \${target_bed} \
@@ -53,16 +44,11 @@ process cramCounts {
 
     input:
     set sample_id, file(input_cram), file(input_crai) from countsInChannel
-    //each line from lines
 
     output:
-    file "${sample_id}.cpt.bed.gz" into countsOutChannel
+    file "*.cpt.bed.gz" into countsOutChannel
 
     script:
-    //list = line.split('\t')
-    //sample_id = list[0]
-    //input_cram = list[1]
-    //input_crai = list[2]
     """
     hts_nim_tools count-reads \
     --fasta \${ref_fasta} \
@@ -82,14 +68,15 @@ process aggregateCoverage {
     label 'combineTasks'
 
     input:
-    file "*" from coverageOutChannel.collect()
+    file input_files from coverageOutChannel.collect()
+    //file "*" from coverageOutChannel.collect()
 
     output:
     file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py * \
+    countsToMatrix.py $input_files \
     --suffix .regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -104,14 +91,14 @@ process aggregateCounts {
     label 'combineTasks'
 
     input:
-    file "*" from aggregateCounts_ch.collect()
+    file input_files from aggregateCounts_ch.collect()
 
     output:
     file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py * \
+    countsToMatrix.py $input_files \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -125,14 +112,14 @@ process aggregateFpkm {
     label 'combineTasks'
 
     input:
-    file "*" from aggregateFpkm_ch.toSortedList()
+    file input_files from aggregateFpkm_ch.collect()
 
     output:
     file "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py $input_files \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
