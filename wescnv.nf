@@ -52,7 +52,7 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    set sample_id*, file(input_cram*), file(input_crai*) from countsInChannel
+    set sample_id, file(input_cram), file(input_crai) from countsInChannel
     //each line from lines
 
     output:
