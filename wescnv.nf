@@ -82,14 +82,14 @@ process aggregateCoverage {
     label 'combineTasks'
 
     input:
-    file "*" from coverageOutChannel.toSortedList()
+    file "*" from coverageOutChannel.collect()
 
     output:
     file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py *.regions.bed.gz \
+    countsToMatrix.py * \
     --suffix .regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
