@@ -104,7 +104,7 @@ process aggregateCounts {
     label 'combineTasks'
 
     input:
-    file "*" from aggregateCounts_ch.toSortedList()
+    file "*" from aggregateCounts_ch.collect()
 
     output:
     file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
