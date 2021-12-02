@@ -12,7 +12,7 @@ params.batch = 'batch01'
 
 Channel
     .fromPath(params.inputFile)
-    .splitCsv(header:true, sep:'\t')
+    .splitCsv(header:true, sep:'[ \t]+')
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
     .set { samples_ch }
 
@@ -24,7 +24,7 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    set sample_id*, file(input_cram*), file(input_crai*) from coverageInChannel
+    set sample_id, file(input_cram), file(input_crai) from coverageInChannel
     //each line from lines
 
     output:
