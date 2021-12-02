@@ -5,6 +5,7 @@ params.outputDir = 'run/'
 params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
+batch=params.batch
 
 Channel
     .fromPath(params.inputFile)
@@ -77,7 +78,7 @@ process aggregateCoverage {
     script:
     """
     countsToMatrix.py $input_files \
-    --suffix .regions.bed.gz \
+    --suffix ".regions.bed.gz" \
     --bed \${target_bed} \
     --merge-bed \
     | gzip > "$batch".coverage_MS-GC.GC5-DF-SD.bed.gz
