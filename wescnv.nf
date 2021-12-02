@@ -7,27 +7,35 @@ params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
 
 // TODO: create input file channel
-inputFile = file(params.inputFile)
-lines = inputFile.readLines()
+// inputFile = file(params.inputFile)
+// lines = inputFile.readLines()
 
-batch = params.batch
+Channel
+    .fromPath(params.inputFile)
+    .splitCsv(header:true, sep:"\t")
+    .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
+    .set { samples_ch }
+
+samples_ch.into { coverageInChannel; countsInChannel }
+
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
 
     label 'bamTasks'
 
     input:
-    each line from lines
+    set sample_id*, file(input_cram*), file(input_crai*) from coverageInChannel
+    //each line from lines
 
     output:
     file "${sample_id}.regions.bed.gz" into coverageOutChannel
     file "${sample_id}.mosdepth.summary.txt"
 
     script:
-    list = line.split('\t')
-    sample_id = list[0]
-    input_cram = list[1]
-    input_crai = list[2]
+    //list = line.split('\t')
+    //sample_id = list[0]
+    //input_cram = list[1]
+    //input_crai = list[2]
     """
     mosdepth --fasta \${ref_fasta} \
     --by \${target_bed} \
@@ -44,16 +52,17 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    each line from lines
+    set sample_id*, file(input_cram*), file(input_crai*) from countsInChannel
+    //each line from lines
 
     output:
     file "${sample_id}.cpt.bed.gz" into countsOutChannel
 
     script:
-    list = line.split('\t')
-    sample_id = list[0]
-    input_cram = list[1]
-    input_crai = list[2]
+    //list = line.split('\t')
+    //sample_id = list[0]
+    //input_cram = list[1]
+    //input_crai = list[2]
     """
     hts_nim_tools count-reads \
     --fasta \${ref_fasta} \
@@ -73,14 +82,14 @@ process aggregateCoverage {
     label 'combineTasks'
 
     input:
-    file '*.regions.bed.gz' from coverageOutChannel.toSortedList()
+    file * from coverageOutChannel.toSortedList()
 
     output:
     file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py *.regions.bed.gz \
+    countsToMatrix.py * \
     --suffix .regions.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -95,14 +104,14 @@ process aggregateCounts {
     label 'combineTasks'
 
     input:
-    file '*.cpt.bed.gz' from aggregateCounts_ch.toSortedList()
+    file * from aggregateCounts_ch.toSortedList()
 
     output:
     file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py * \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --merge-bed \
@@ -116,14 +125,14 @@ process aggregateFpkm {
     label 'combineTasks'
 
     input:
-    file '*.cpt.bed.gz' from aggregateFpkm_ch.toSortedList()
+    file * from aggregateFpkm_ch.toSortedList()
 
     output:
     file "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"
 
     script:
     """
-    countsToMatrix.py *.cpt.bed.gz \
+    countsToMatrix.py * \
     --suffix .cpt.bed.gz \
     --bed \${target_bed} \
     --fpkm \
