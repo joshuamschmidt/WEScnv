@@ -131,8 +131,10 @@ process aggregateFpkm {
 
 
 /*
-* Now, Let's take the counts file and determine which exons to remove due to consistently no data
-*
+* Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
+* and define which exons should be filtered from the analysis.
+* outputs plots of clusterings...
+* compare to ExomeDepth method?
 */
 
 
