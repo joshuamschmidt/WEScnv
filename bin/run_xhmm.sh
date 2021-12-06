@@ -22,7 +22,7 @@ xhmm --matrix -r ./"$DATA".txt --centerData --centerType target \
 --outputExcludedTargets ./"$DATA".filtered_centered.txt.filtered_targets.txt \
 --outputExcludedSamples ./"$DATA".filtered_centered.txt.filtered_samples.txt \
 --minTargetSize 10 --maxTargetSize 10000 \
---minMeanTargetRD 10 --maxMeanTargetRD 500 \
+--minMeanTargetRD 15 --maxMeanTargetRD 500 \
 --minMeanSampleRD 20 --maxMeanSampleRD 200 \
 --maxSdSampleRD 150
 
