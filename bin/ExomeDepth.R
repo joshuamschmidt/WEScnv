@@ -1,9 +1,14 @@
 #!/usr/bin/env Rscript 
+args = commandArgs(trailingOnly=TRUE)
 library(stringdist)
 library(data.table)
 library(ExomeDepth)
-setwd('~/Projects/WEScnv/testing/')
-counts <- fread('test200.counts_MS-GC.GC5-DF-SD.bed.gz',header=T)
+
+# from ARGV
+test_sample <- args[1]
+counts <- fread(args[2],header=T)
+
+
 counts[,width:=end-start]
 # construct reference set for the sample....
 exomes <- names(counts)[!grepl("user|chr|start|end",names(counts))]
