@@ -144,7 +144,7 @@ process assignBioSex {
     script:
     """
     assign_bio_sex.py $input_files \
-    --suffix ".regions.bed.gz" > "$batch"_bioSex-Assignment.txt
+    --suffix ".mosdepth.summary.txt" > "$batch"_bioSex-Assignment.txt
     """
 }
 
