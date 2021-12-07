@@ -80,18 +80,18 @@ class coverageSummaries():
             yToX = y_mean / x_mean
             bioSex='UNASSIGNED'
             # Assign sex
-            if mean_xToA >= 0.4 and mean_xToA <= 0.7:
-                if mean_yToA > 0.2:
+            if mean_xToA >= 0.45 and mean_xToA <= 0.65:
+                if mean_yToA > 0.25:
                     bioSex="MALE:XY"
-                if mean_yToA < 0.01:
+                if mean_yToA < 0.0001:
                     bioSex="FEMALE:XO"
-            elif mean_xToA >= 0.8:
-                if mean_yToA <0.01:
+            elif mean_xToA >= 0.85 and mean_xToA <=1.25:
+                if mean_yToA <0.0001:
                     bioSex="FEMALE:XX"
-                elif mean_yToA > 0.2:
+                elif mean_yToA > 0.25:
                      bioSex="MALE:XXY"
-            elif mean_xToA >= 1.2:
-                if mean_yToA <0.01:
+            elif mean_xToA > 1.25:
+                if mean_yToA <0.0001:
                     bioSex="FEMALE:XXX"
             summary = [sample_name, bioSex, autosome_mean, autosome_sd, x_mean, mean_xToA, sd_xToA, y_mean, mean_yToA, sd_yToA]
             samples_info.append(summary)
