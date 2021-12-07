@@ -131,7 +131,7 @@ process aggregateFpkm {
 
 
 process assignBioSex {
-    publishDir "$params.outdir/CombinedCov/", pattern: "*Assignment.txt"
+    publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt"
 
     label 'combineTasks'
 
