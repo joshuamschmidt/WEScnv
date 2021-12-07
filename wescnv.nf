@@ -25,7 +25,7 @@ process cramCoverage {
 
     output:
     file "*regions.bed.gz" into coverageOutChannel
-    file "${sample_id}.mosdepth.summary.txt"
+    file "${sample_id}.mosdepth.summary.txt" into coverageSummaryChannel
 
     script:
     """
@@ -128,6 +128,26 @@ process aggregateFpkm {
     | gzip > "$batch".fkpm_MS-GC.GC5-DF-SD.bed.gz
     """
 }
+
+
+process assignBioSex {
+    publishDir "$params.outdir/CombinedCov/", pattern: "*Assignment.txt"
+
+    label 'combineTasks'
+
+    input:
+    file input_files from coverageSummaryChannel.collect()
+
+    output:
+    file "${batch}_bioSex-Assignment.txt"
+
+    script:
+    """
+    assign_bio_sex.py $input_files \
+    --suffix ".regions.bed.gz" > "$batch"_bioSex-Assignment.txt
+    """
+}
+
 
 
 /*

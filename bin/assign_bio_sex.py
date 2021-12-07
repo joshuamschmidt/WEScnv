@@ -103,7 +103,7 @@ def main():
     args = parser.parse_args()
     assert all(args.file_suffix in file for file in args.files), "files have different suffixes"
     samples = coverageSummaries(args.files, file_suffix=args.file_suffix)
-    samples.summaries.to_csv(path_or_buf=args.out_file, sep='\t', encoding='utf-8',index=False, float_format='%4g',header=True)
+    samples.summaries.to_csv(path_or_buf=args.out_file, sep='\t', encoding='utf-8',index=False, float_format='%3f',header=True)
 
 if __name__ == '__main__':
     main()
