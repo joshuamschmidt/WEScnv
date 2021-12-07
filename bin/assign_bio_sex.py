@@ -81,7 +81,7 @@ class coverageSummaries():
             bioSex='UNASSIGNED'
             # Assign sex
             if mean_xToA >= 0.4 and mean_xToA <= 0.7:
-                if mean_yToA > 0.2:
+                if mean_yToA > 0.1:
                     bioSex="MALE:XY"
                 if mean_yToA < 0.01:
                     bioSex="FEMALE:XO"
