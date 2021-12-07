@@ -33,3 +33,37 @@ targets[,V4:=paste(V4,number,sep="_")]
 targets[,number:=NULL]
 fwrite(targets,file="Agilent_V5_targets.bed",sep="\t",row.names=F,col.names=F,quote=F)
 `
+
+## Add covariates like mappability and GC content to target bed....
+`MAP="/share/ScratchGeneral/jossch/mappability/hg38"`
+`REF="/share/ScratchGeneral/jossch/reference/gatk/hg38"`
+`TARGETS="/share/ScratchGeneral/jossch/WEScnv/exome_design"`
+
+`
+module load bedops
+module load bedtools
+#### MAP
+bedmap --echo --mean --delim '\t' "$TARGETS"/Agilent_V5_targets.bed "$MAP"/tmp.map.bed \
+> "$TARGETS"/Agilent_V5_targets-MAP100.bed
+
+#### GC
+
+bedtools nuc -bed "$TARGETS"/Agilent_V5_targets-MAP100.bed \
+-fi "$REF"/Homo_sapiens_assembly38.fasta \
+| cut -f1-5,7 | sed '1d' >  "$TARGETS"/Agilent_V5_targets-MAP100-GC.bed
+
+bedtools nuc -bed <(awk '{OFS="\t"}; {$2=$2-500; $3=$3+500; print}' "$TARGETS"/Agilent_V5_targets-MAP100-GC.bed) \
+-fi "$REF"/Homo_sapiens_assembly38.fasta \
+| cut -f1-6,8 | sed '1d' | awk '{OFS="\t"}; {$2=$2+500; $3=$3-500; print}' >  "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500.bed
+
+#### WIDTH
+
+awk 'BEGIN {OFS="\t";} {width=sprintf("%.3f",($3-$2)/1000);} {print $0, width}' "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500.bed > "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD.bed
+
+#### MERGED
+awk 'BEGIN {OFS="\t";} {merged=0;} {if($4~/,/) merged=1;} {print $0, merged} ' "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD.bed > "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed
+
+#### TXT with header
+
+awk 'BEGIN {OFS="\t"; print "CHR", "START", "END", "TARGET", "MAP100", "GC", "GC500", "WIDTH", "MERGED";} {print $0}' "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed > "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD-M.txt
+`
