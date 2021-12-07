@@ -88,7 +88,7 @@ class coverageSummaries():
             elif mean_xToA >= 0.8:
                 if mean_yToA <0.01:
                     bioSex="FEMALE:XX"
-                elif mean_yToA > 0.25:
+                elif mean_yToA > 0.1:
                      bioSex="MALE:XXY"
             elif mean_xToA >= 1.2:
                 if mean_yToA <0.01:
