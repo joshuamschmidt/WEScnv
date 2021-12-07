@@ -1,3 +1,6 @@
 tools/hts_nim_tools/hts_nim_tools
 testing/
+exome_design/
+results/
+work/
 inputFiles.txt
