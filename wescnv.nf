@@ -2,18 +2,27 @@
 
 // default params
 params.outputDir = 'run/'
-params.saveMode = 'copy'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
+params.reference_fasta = 'ref.fasta'
+params.reference_fasta_index = 'ref.fai'
+params.target_bed = 'targets.bed'
+params.target_cov_txt = 'targets.txt'
+params.bait_bed = 'baits.bed'
 batch=params.batch
+reference_fasta=params.reference_fasta
+reference_fasta_index=params.reference_fasta_index
+target_bed=params.target_bed
+target_cov_txt=params.target_cov_txt
+bait_bed=params.bait_bed
 
 Channel
     .fromPath(params.inputFile)
     .splitCsv(header:true, sep:'\t')
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
-    .set { samples_ch }
+    .set { coverageInChannel; countsInChannel , hsMetricsInChannel, isMetricsInChannel }
 
-samples_ch.into { coverageInChannel; countsInChannel }
+//samples_ch.into { coverageInChannel; countsInChannel , hsMetricsInChannel, isMetricsInChannel}
 
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
@@ -29,8 +38,8 @@ process cramCoverage {
 
     script:
     """
-    mosdepth --fasta \${ref_fasta} \
-    --by \${target_bed} \
+    mosdepth --fasta $reference_fasta \
+    --by $target_bed \
     --no-per-base \
     --mapq 25 \
     --threads $task.cpus \
@@ -52,10 +61,10 @@ process cramCounts {
     script:
     """
     hts_nim_tools count-reads \
-    --fasta \${ref_fasta} \
+    --fasta $reference_fasta \
     --mapq 25 \
     --threads $task.cpus \
-    \${target_bed} $input_cram \
+    $target_bed $input_cram \
     | sort -k1,1 -k2,2n \
     | gzip > "$sample_id".cpt.bed.gz
     """
@@ -70,21 +79,19 @@ process aggregateCoverage {
 
     input:
     file input_files from coverageOutChannel.collect()
-    //file "*" from coverageOutChannel.collect()
 
     output:
-    file "${batch}.coverage_MS-GC.GC5-DF-SD.bed.gz"
+    file "${batch}.coverage.bed.gz"
 
     script:
     """
     countsToMatrix.py $input_files \
     --suffix ".regions.bed.gz" \
-    --bed \${target_bed} \
+    --bed $target_cov_txt \
     --merge-bed \
-    | gzip > "$batch".coverage_MS-GC.GC5-DF-SD.bed.gz
+    | gzip > "$batch".coverage.bed.gz
     """
 }
-
 
 process aggregateCounts {
     publishDir "$params.outdir/CombinedCov/", pattern: "*counts*"
@@ -95,15 +102,15 @@ process aggregateCounts {
     file input_files from aggregateCounts_ch.collect()
 
     output:
-    file "${batch}.counts_MS-GC.GC5-DF-SD.bed.gz"
+    file "${batch}.counts.bed.gz"
 
     script:
     """
     countsToMatrix.py $input_files \
     --suffix .cpt.bed.gz \
-    --bed \${target_bed} \
+    --bed $target_cov_txt \
     --merge-bed \
-    | gzip > "$batch".counts_MS-GC.GC5-DF-SD.bed.gz
+    | gzip > "$batch".counts.bed.gz
     """
 }
 
@@ -116,19 +123,18 @@ process aggregateFpkm {
     file input_files from aggregateFpkm_ch.collect()
 
     output:
-    file "${batch}.fkpm_MS-GC.GC5-DF-SD.bed.gz"
+    file "${batch}.fkpm.bed.gz"
 
     script:
     """
     countsToMatrix.py $input_files \
     --suffix .cpt.bed.gz \
-    --bed \${target_bed} \
+    --bed $target_cov_txt \
     --fpkm \
     --merge-bed \
-    | gzip > "$batch".fkpm_MS-GC.GC5-DF-SD.bed.gz
+    | gzip > "$batch".fkpm.bed.gz
     """
 }
-
 
 process assignBioSex {
     publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt"
@@ -148,6 +154,70 @@ process assignBioSex {
     """
 }
 
+
+ process collectHSMetrics {
+    publishDir "$params.outdir/HSmetrics/", pattern: "*hs_metrics.txt"
+    label 'gatkMetrics'
+
+    input:
+
+    set sample_id, file(input_cram), file(input_crai) from hsMetricsInChannel
+
+    output:
+
+    tuple val(sample_id), file('"$sample_id"_hs_metrics.txt') into HSMetricsOuts
+
+    script:
+    """
+    java "-Xmx${task.memory.toGiga()}G" -jar picard.jar CollectHsMetrics \
+      I=$input_cram \
+      O="$sample_id"_hs_metrics.txt \
+      R=$reference_fasta \
+      BAIT_INTERVALS=$bait_bed \
+      TARGET_INTERVALS=$target_bed
+    """
+}
+
+process collectISMetrics {
+    publishDir "$params.outdir/ISmetrics/", pattern: "*is_metrics*"
+    label 'gatkMetrics'
+
+    input:
+
+    set sample_id, file(input_cram), file(input_crai) from isMetricsInChannel
+
+    output:
+
+    tuple val(sample_id), file('"$sample_id"_is_metrics.txt') into ISMetricsOuts
+
+    script:
+    """
+    java "-Xmx${task.memory.toGiga()}G" -jar picard.jar InsertSizeMetrics \
+      I=$input_cram \
+      O="$sample_id"_is_metrics.txt \
+      H="$sample_id"_is_metrics.pdf
+    """
+}
+
+mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
+
+process MergeMetrics{
+    publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt"
+
+    input:
+
+    set sample_id, file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
+
+    output:
+
+    file "${sample_id}_mergedMetrics.txt" into defineClustersInChannel
+
+    script:
+    """
+    combineGATK-metrics.sh > ${sample_id}_mergedMetrics.txt;
+    """
+
+}
 
 
 /*
