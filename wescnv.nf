@@ -223,6 +223,7 @@ process collectISMetrics {
     """
     cp $reference_fasta_index .
     gatk --java-options "-Xmx8g" CollectInsertSizeMetrics \
+      R=$reference_fasta \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \
       H="$sample_id"_is_metrics.pdf
