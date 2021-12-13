@@ -16,6 +16,32 @@ target_bed=params.target_bed
 target_cov_txt=params.target_cov_txt
 bait_bed=params.bait_bed
 
+
+/////////////////////////////////////////////////////////
+/* --          VALIDATE INPUT FILES                 -- */
+/////////////////////////////////////////////////////////
+
+
+
+if (params.reference_fasta) {
+    file(params.reference_fasta, checkIfExists: true)
+    lastPath = params.reference_fasta.lastIndexOf(File.separator)
+    lastExt = params.reference_fasta.lastIndexOf(".")
+    fasta_base = params.reference_fasta.substring(lastPath+1)
+    index_base = params.reference_fasta.substring(lastPath+1,lastExt)
+    if (params.reference_fasta.endsWith('.gz')) {
+        fasta_base = params.reference_fasta.substring(lastPath+1,lastExt)
+        index_base = fasta_base.substring(0,fasta_base.lastIndexOf("."))
+
+    }
+} else {
+    exit 1, "[WEScnv] error: please specify --fasta with the path to your reference"
+}
+
+
+
+
+
 Channel
     .fromPath(params.inputFile)
     .splitCsv(header:true, sep:'\t')
@@ -38,6 +64,7 @@ process cramCoverage {
 
     script:
     """
+    cp $reference_fasta_index .
     mosdepth --fasta $reference_fasta \
     --by $target_bed \
     --no-per-base \
@@ -60,6 +87,7 @@ process cramCounts {
 
     script:
     """
+    cp $reference_fasta_index .
     hts_nim_tools count-reads \
     --fasta $reference_fasta \
     --mapq 25 \
@@ -169,6 +197,7 @@ process assignBioSex {
 
     script:
     """
+    cp $reference_fasta_index .
     java -Xmx11g -jar build/libs/picard.jar CollectHsMetrics \
       I=$input_cram \
       O="$sample_id"_hs_metrics.txt \
@@ -192,6 +221,7 @@ process collectISMetrics {
 
     script:
     """
+    cp $reference_fasta_index .
     java -Xmx11g -jar build/libs/picard.jar InsertSizeMetrics \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \
