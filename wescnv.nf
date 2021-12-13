@@ -201,7 +201,7 @@ process collectHSMetrics {
     script:
     """
     cp $reference_fasta_index .
-    gatk --java-options "-Xmx12g" CollectHsMetrics \
+    gatk --java-options "-Xmx14g" CollectHsMetrics \
       I=$input_cram \
       O="$sample_id"_hs_metrics.txt \
       R=$reference_fasta \
@@ -225,7 +225,7 @@ process collectISMetrics {
     script:
     """
     cp $reference_fasta_index .
-    gatk --java-options "-Xmx12g" CollectInsertSizeMetrics \
+    gatk --java-options "-Xmx14g" CollectInsertSizeMetrics \
       R=$reference_fasta \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \

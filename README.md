@@ -35,11 +35,13 @@ dynamic resource, particulalry memory and TMPDIR on cluster.
 
 `nextflow run wescnv.nf -resume \
 -profile garvan \
---batch test20 \
---inputFile test20.txt \
+--batch test4 \
+--inputFile test4.txt \
 --reference_fasta /share/ScratchGeneral/jossch/reference/gatk/hg38/Homo_sapiens_assembly38.fasta \
 --reference_fasta_index /share/ScratchGeneral/jossch/reference/gatk/hg38/Homo_sapiens_assembly38.fasta.fai \
 --target_bed /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed \
 --target_cov_txt /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.txt \
---bait_bed /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_probes.bed
+--target_picard /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.interval_list \
+--bait_bed /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_probes.bed \
+--bait_picard /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_probes.interval_list
 `
