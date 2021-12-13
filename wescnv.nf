@@ -22,7 +22,7 @@ Channel
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
     .set { samples_ch }
 
-samples_ch.into { coverageInChannel; countsInChannel , hsMetricsInChannel, isMetricsInChannel}
+samples_ch.into { coverageInChannel; countsInChannel; hsMetricsInChannel; isMetricsInChannel}
 
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
