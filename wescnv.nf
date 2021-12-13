@@ -215,7 +215,6 @@ process collectISMetrics {
     label 'picardMetrics'
 
     input:
-
     set sample_id, file(input_cram), file(input_crai) from isMetricsInChannel
 
     output:
@@ -236,8 +235,8 @@ process collectISMetrics {
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
 
 process MergeMetrics{
-    publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt"
-
+    publishDir "$params.outdir/Mergedmetrics/", pattern: "*_mergedMetrics.txt"
+    label 'noContainer'
     input:
 
     set sample_id, file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
@@ -248,7 +247,7 @@ process MergeMetrics{
 
     script:
     """
-    combineGATK-metrics.sh > ${sample_id}_mergedMetrics.txt;
+    combineGATK-metrics.sh $sample_id ${sample_id}_hs_metrics.txt ${sample_id}_is_metrics.txt > ${sample_id}_mergedMetrics.txt;
     """
 
 }
