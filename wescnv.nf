@@ -8,14 +8,17 @@ params.reference_fasta = 'ref.fasta'
 params.reference_fasta_index = 'ref.fai'
 params.target_bed = 'targets.bed'
 params.target_cov_txt = 'targets.txt'
+params.target_picard = ''
 params.bait_bed = 'baits.bed'
+params.bait_picard = ''
 batch=params.batch
 reference_fasta=params.reference_fasta
 reference_fasta_index=params.reference_fasta_index
 target_bed=params.target_bed
 target_cov_txt=params.target_cov_txt
+target_picard_list=params.target_picard
 bait_bed=params.bait_bed
-
+bait_picard_list=params.bait_picard
 
 /////////////////////////////////////////////////////////
 /* --          VALIDATE INPUT FILES                 -- */
@@ -183,7 +186,7 @@ process assignBioSex {
 }
 
 
- process collectHSMetrics {
+process collectHSMetrics {
     publishDir "$params.outdir/HSmetrics/", pattern: "*hs_metrics.txt"
     label 'picardMetrics'
 
@@ -198,12 +201,12 @@ process assignBioSex {
     script:
     """
     cp $reference_fasta_index .
-    gatk --java-options "-Xmx8g" CollectHsMetrics \
+    gatk --java-options "-Xmx12g" CollectHsMetrics \
       I=$input_cram \
       O="$sample_id"_hs_metrics.txt \
       R=$reference_fasta \
-      BAIT_INTERVALS=$bait_bed \
-      TARGET_INTERVALS=$target_bed
+      BAIT_INTERVALS=$bait_picard_list \
+      TARGET_INTERVALS=$target_picard_list
     """
 }
 
@@ -222,7 +225,7 @@ process collectISMetrics {
     script:
     """
     cp $reference_fasta_index .
-    gatk --java-options "-Xmx8g" CollectInsertSizeMetrics \
+    gatk --java-options "-Xmx12g" CollectInsertSizeMetrics \
       R=$reference_fasta \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \
