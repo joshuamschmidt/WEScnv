@@ -198,7 +198,7 @@ process assignBioSex {
     script:
     """
     cp $reference_fasta_index .
-    java -Xmx10g -jar /usr/picard/picard.jar CollectHsMetrics \
+    gatk --java-options "-Xmx12g" CollectHsMetrics \
       I=$input_cram \
       O="$sample_id"_hs_metrics.txt \
       R=$reference_fasta \
@@ -222,7 +222,7 @@ process collectISMetrics {
     script:
     """
     cp $reference_fasta_index .
-    java -Xmx10g -jar /usr/picard/picard.jar InsertSizeMetrics \
+    gatk --java-options "-Xmx12g" CollectInsertSizeMetrics \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \
       H="$sample_id"_is_metrics.pdf
