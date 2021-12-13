@@ -1,2 +1,0 @@
-2021-12-07 12:41:56	4h 20m 3s	thirsty_wright	OK	6282e48062ada2069b07d026f5619272	a0ba8137-d057-4d14-a992-1c3ef0cd8922	nextflow run wescnv.nf -profile garvan --inputFile inputFiles.txt --batch production
-2021-12-07 21:48:31	1m 32s	extravagant_leakey	OK	2ab4a0fb54a06f42518ac1d575b4779d	a0ba8137-d057-4d14-a992-1c3ef0cd8922	nextflow run wescnv.nf -resume -profile garvan --inputFile inputFiles.txt --batch production

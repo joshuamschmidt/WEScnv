@@ -6,3 +6,4 @@ work/
 qc/
 inputFiles.txt
 .nextflow/
+.nextflow*
