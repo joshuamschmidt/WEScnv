@@ -247,7 +247,7 @@ process MergeMetrics{
 
     script:
     """
-    combineGATK-metrics.sh $sample_id ${sample_id}_hs_metrics.txt ${sample_id}_is_metrics.txt > ${sample_id}_mergedMetrics.txt;
+    combineGATK-metrics.sh ${sample_id}_hs_metrics.txt ${sample_id}_is_metrics.txt > ${sample_id}_mergedMetrics.txt;
     """
 
 }
