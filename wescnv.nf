@@ -200,7 +200,7 @@ process assignBioSex {
     cp $reference_fasta_index .
     gatk --java-options "-Xmx8g" CollectHsMetrics \
       I=$input_cram \
-      O="$sample_id"_hs_metrics.txt \
+      O=$sample_id_hs_metrics.txt \
       R=$reference_fasta \
       BAIT_INTERVALS=$bait_bed \
       TARGET_INTERVALS=$target_bed
@@ -225,8 +225,8 @@ process collectISMetrics {
     gatk --java-options "-Xmx8g" CollectInsertSizeMetrics \
       R=$reference_fasta \
       I=$input_cram \
-      O="$sample_id"_is_metrics.txt \
-      H="$sample_id"_is_metrics.pdf
+      O=$sample_id_is_metrics.txt \
+      H=$sample_id_is_metrics.pdf
     """
 }
 
