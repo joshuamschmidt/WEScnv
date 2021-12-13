@@ -234,7 +234,7 @@ process collectISMetrics {
 
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
 
-/*process MergeMetrics{
+process MergeMetrics{
     publishDir "$params.outdir/Mergedmetrics/", pattern: "*_mergedMetrics.txt"
     label 'script'
     input:
@@ -250,7 +250,7 @@ mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true
     combineGATK-metrics.sh "$sample_id" ${sample_id}_hs_metrics.txt ${sample_id}_is_metrics.txt > ${sample_id}_mergedMetrics.txt;
     """
 }
-*/
+
 
 /*
 * Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
