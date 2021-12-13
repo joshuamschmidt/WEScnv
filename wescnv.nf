@@ -196,7 +196,7 @@ process collectHSMetrics {
 
     output:
 
-    tuple sample_id, "$sample_id"_hs_metrics.txt into HSMetricsOuts
+    tuple sample_id, "${sample_id}"_hs_metrics.txt into HSMetricsOuts
 
     script:
     """
@@ -220,7 +220,7 @@ process collectISMetrics {
 
     output:
 
-    tuple sample_id, "$sample_id"_is_metrics.txt into ISMetricsOuts
+    tuple sample_id, "${sample_id}"_is_metrics.txt into ISMetricsOuts
 
     script:
     """
