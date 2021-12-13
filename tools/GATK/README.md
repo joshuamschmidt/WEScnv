@@ -5,7 +5,8 @@ Make a singularity image based on docker hub:
 
 `singularity build /share/ClusterShare/software/contrib/jossch/singularity_images/gatk:4.2.3.0  docker://broadinstitute/gatk:4.2.3.0`
 
-docker pull latest
+`singularity build /share/ClusterShare/software/contrib/jossch/singularity_images/picard:2.26.6 docker://broadinstitute/picard:2.26.6`
+
 
 #!/bin/bash
 echo "Begin ${task_file}"

@@ -157,7 +157,7 @@ process assignBioSex {
 
  process collectHSMetrics {
     publishDir "$params.outdir/HSmetrics/", pattern: "*hs_metrics.txt"
-    label 'gatkMetrics'
+    label 'picardMetrics'
 
     input:
 
@@ -169,7 +169,7 @@ process assignBioSex {
 
     script:
     """
-    java "-Xmx${task.memory.toGiga()}G" -jar picard.jar CollectHsMetrics \
+    java -Xmx11g -jar build/libs/picard.jar CollectHsMetrics \
       I=$input_cram \
       O="$sample_id"_hs_metrics.txt \
       R=$reference_fasta \
@@ -180,7 +180,7 @@ process assignBioSex {
 
 process collectISMetrics {
     publishDir "$params.outdir/ISmetrics/", pattern: "*is_metrics*"
-    label 'gatkMetrics'
+    label 'picardMetrics'
 
     input:
 
@@ -192,7 +192,7 @@ process collectISMetrics {
 
     script:
     """
-    java "-Xmx${task.memory.toGiga()}G" -jar picard.jar InsertSizeMetrics \
+    java -Xmx11g -jar build/libs/picard.jar InsertSizeMetrics \
       I=$input_cram \
       O="$sample_id"_is_metrics.txt \
       H="$sample_id"_is_metrics.pdf

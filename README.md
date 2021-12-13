@@ -37,9 +37,9 @@ dynamic resource, particulalry memory and TMPDIR on cluster.
 -profile garvan \
 --batch test20 \
 --inputFile test20.txt \
---reference_fasta \
---reference_fasta_index \
---target_bed assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed \
---target_cov_txt assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.txt \
---bait_bed assets/Agilent_V5_probes.bed
+--reference_fasta /share/ScratchGeneral/jossch/reference/gatk/hg38/Homo_sapiens_assembly38.fasta \
+--reference_fasta_index /share/ScratchGeneral/jossch/reference/gatk/hg38/Homo_sapiens_assembly38.fasta.fai \
+--target_bed /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed \
+--target_cov_txt /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_targets-MAP100-GC-GC500-WD-M.txt \
+--bait_bed /share/ScratchGeneral/jossch/WEScnv/assets/Agilent_V5_probes.bed
 `
