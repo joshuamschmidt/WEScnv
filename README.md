@@ -35,7 +35,7 @@ dynamic resource, particulalry memory and TMPDIR on cluster.
 
 `nextflow run wescnv.nf -resume \
 -profile garvan \
---batch test20
+--batch test20 \
 --inputFile test20.txt \
 --reference_fasta \
 --reference_fasta_index \
