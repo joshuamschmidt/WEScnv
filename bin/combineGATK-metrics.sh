@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ash
 #sample_id=${1}
 hsMetrics=${1}
 isMetrics=${2}

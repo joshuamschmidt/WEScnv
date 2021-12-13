@@ -236,7 +236,7 @@ mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true
 
 process MergeMetrics{
     publishDir "$params.outdir/Mergedmetrics/", pattern: "*_mergedMetrics.txt"
-    label 'noContainer'
+    label 'script'
     input:
 
     set sample_id, file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
