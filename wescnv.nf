@@ -257,12 +257,6 @@ process MergeMetrics{
     """
 }
 
-process defineGroups {
-
-
-
-}
-
 /*
 * Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
 * and define which exons should be filtered from the analysis.
