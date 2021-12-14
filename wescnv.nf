@@ -59,11 +59,11 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    tuple val(sample_id), file(input_cram), file(input_crai) from coverageInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai) from coverageInChannel
 
     output:
-    file "*regions.bed.gz" into coverageOutChannel
-    file "${sample_id}.mosdepth.summary.txt" into coverageSummaryChannel
+    path "*regions.bed.gz" into coverageOutChannel
+    path "${sample_id}.mosdepth.summary.txt" into coverageSummaryChannel
 
     script:
     """
@@ -83,10 +83,10 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    tuple val(sample_id), file(input_cram), file(input_crai) from countsInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai) from countsInChannel
 
     output:
-    file "*.cpt.bed.gz" into countsOutChannel
+    path "*.cpt.bed.gz" into countsOutChannel
 
     script:
     """
@@ -192,11 +192,11 @@ process collectHSMetrics {
 
     input:
 
-    tuple val(sample_id), file(input_cram), file(input_crai) from hsMetricsInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai) from hsMetricsInChannel
 
     output:
 
-    tuple val(sample_id), file("*hs_metrics.txt") into HSMetricsOuts
+    tuple val(sample_id), path("*hs_metrics.txt") into HSMetricsOuts
 
     script:
     """
