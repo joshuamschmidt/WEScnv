@@ -241,7 +241,7 @@ process MergeMetrics{
     label 'script'
     input:
 
-    tuple val(sample_id), path("*hs_metrics.txt"), path("*is_metrics.txt") from mergedMetricsInChannel
+    tuple val(sample_id), path(hs_metrics), path(is_metrics) from mergedMetricsInChannel
 
     output:
 
@@ -251,8 +251,8 @@ process MergeMetrics{
     """
     #!/usr/bin/env bash
     set -eo pipefail
-    cut -f9,32,46,48,52,63,64 "$sample_id"_hs_metrics.txt | sed '8q;d' > tmp_hs
-    cut -f1,3,6,7 "$sample_id"_is_metrics.txt | sed '8q;d'> tmp_is
+    cut -f9,32,46,48,52,63,64 $hs_metrics | sed '8q;d' > tmp_hs
+    cut -f1,3,6,7 $is_metrics | sed '8q;d'> tmp_is
     paste tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
     """
 }
