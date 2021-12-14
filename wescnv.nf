@@ -234,7 +234,6 @@ process collectISMetrics {
 }
 
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
-//mergedMetricsInChannel.view { "sample: it[0]; hsFILE: it[1];  isFILE: it[2]" }
 
 process MergeMetrics{
     publishDir "$params.outdir/Mergedmetrics/", pattern: "*_mergedMetrics.txt"
@@ -245,19 +244,24 @@ process MergeMetrics{
 
     output:
 
-    tuple val(sample_id), path("*_mergedMetrics.txt") into defineClustersInChannel
+    path("*_mergedMetrics.txt") into defineClustersInChannel
 
     script:
     """
     #!/usr/bin/env bash
     set -eo pipefail
+    echo $sample_id > tmp_name
     cut -f9,32,46,48,52,63,64 $hs_metrics | sed '8q;d' > tmp_hs
     cut -f1,3,6,7 $is_metrics | sed '8q;d'> tmp_is
-    paste tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
+    paste tmp_name tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
     """
 }
-//defineClustersInChannel.view {"this tuple: $it[0] $it[1]"}
 
+process defineGroups {
+
+
+
+}
 
 /*
 * Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
