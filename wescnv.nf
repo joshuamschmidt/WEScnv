@@ -245,13 +245,13 @@ process MergeMetrics{
 
     file "${sample_id}_mergedMetrics.txt" into defineClustersInChannel
 
-    script:
-    """
+    shell:
+    '''
     #!/usr/bin/env ash
 
-    paste <(cut -f9,32,46,48,52,63,64 ${sample_id}_hs_metrics.txt) <(cut -f1,3,6,7 ${sample_id}_is_metrics.txt) >\
-    ${sample_id}_mergedMetrics.txt
-    """
+    paste <(cut -f9,32,46,48,52,63,64 !{sample_id}_hs_metrics.txt) <(cut -f1,3,6,7 !{sample_id}_is_metrics.txt) >\
+    !{sample_id}_mergedMetrics.txt
+    '''
 
     /*
     """
