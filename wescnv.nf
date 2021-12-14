@@ -239,7 +239,7 @@ process MergeMetrics{
     label 'script'
     input:
 
-    set sample_id, file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
+    set val(sample_id), file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
 
     output:
 
@@ -247,7 +247,7 @@ process MergeMetrics{
 
     shell:
     '''
-    #!/usr/bin/env ash
+    #!/usr/bin/env bash
 
     paste <(cut -f9,32,46,48,52,63,64 !{sample_id}_hs_metrics.txt) <(cut -f1,3,6,7 !{sample_id}_is_metrics.txt) >\
     !{sample_id}_mergedMetrics.txt
