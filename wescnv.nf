@@ -196,7 +196,7 @@ process collectHSMetrics {
 
     output:
 
-    tuple val(sample_id), file(*hs_metrics.txt) into HSMetricsOuts
+    tuple val(sample_id), file("*hs_metrics.txt") into HSMetricsOuts
 
     script:
     """
@@ -220,7 +220,7 @@ process collectISMetrics {
 
     output:
 
-    tuple val(sample_id), file(*is_metrics.txt) into ISMetricsOuts
+    tuple val(sample_id), file("*is_metrics.txt") into ISMetricsOuts
 
     script:
     """
