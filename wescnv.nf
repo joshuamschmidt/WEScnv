@@ -251,11 +251,12 @@ process MergeMetrics{
     """
     #!/usr/bin/env bash
     set -eo pipefail
-    paste <(cut -f9,32,46,48,52,63,64 "$sample_id"_hs_metrics.txt) <(cut -f1,3,6,7 "$sample_id"_is_metrics.txt) > \
-    "$sample_id"_mergedMetrics.txt
+    tmp_hs=cut -f9,32,46,48,52,63,64 "$sample_id"_hs_metrics.txt
+    tmp_is=cut -f1,3,6,7 "$sample_id"_is_metrics.txt
+    paste tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
     """
 }
-defineClustersInChannel.view {"this tuple: $it[0] $it[1]"}
+//defineClustersInChannel.view {"this tuple: $it[0] $it[1]"}
 
 
 /*
