@@ -255,7 +255,7 @@ process MergeMetrics{
     "${sample_id}"_mergedMetrics.txt
     """
 }
-defineClustersInChannel.view{"this tuple: $it[0] $it[1]"}
+defineClustersInChannel.view {"this tuple: $it[0] $it[1]"}
 
 
 /*
