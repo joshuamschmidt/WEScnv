@@ -216,11 +216,11 @@ process collectISMetrics {
 
     input:
 
-    tuple val(sample_id), file(input_cram), file(input_crai) from isMetricsInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai) from isMetricsInChannel
 
     output:
 
-    tuple val(sample_id), file("*is_metrics.txt") into ISMetricsOuts
+    tuple val(sample_id), path("*is_metrics.txt") into ISMetricsOuts
 
     script:
     """
@@ -234,7 +234,7 @@ process collectISMetrics {
 }
 
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
-mergedMetricsInChannel.view { "sample: $it[0]; hsFILE: $it[1];  isFILE: $it[2]" }
+mergedMetricsInChannel.view { "sample: it[0]; hsFILE: it[1];  isFILE: it[2]" }
 
 
 /*
