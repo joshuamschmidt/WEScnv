@@ -251,8 +251,8 @@ process MergeMetrics{
     """
     #!/usr/bin/env bash
     set -eo pipefail
-    tmp_hs=cut -f9,32,46,48,52,63,64 "$sample_id"_hs_metrics.txt
-    tmp_is=cut -f1,3,6,7 "$sample_id"_is_metrics.txt
+    cut -f9,32,46,48,52,63,64 "$sample_id"_hs_metrics.txt | sed '8q;d' > tmp_hs
+    cut -f1,3,6,7 "$sample_id"_is_metrics.txt | sed '8q;d'> tmp_is
     paste tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
     """
 }
