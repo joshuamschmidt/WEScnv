@@ -243,7 +243,7 @@ process MergeMetrics{
 
     output:
 
-    file val(sample_id), "${sample_id}_mergedMetrics.txt" into defineClustersInChannel
+    set val(sample_id), file("${sample_id}_mergedMetrics.txt") into defineClustersInChannel
 
     script:
     """
