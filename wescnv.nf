@@ -59,7 +59,7 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    set val(sample_id), file(input_cram), file(input_crai) from coverageInChannel
+    tuple val(sample_id), file(input_cram), file(input_crai) from coverageInChannel
 
     output:
     file "*regions.bed.gz" into coverageOutChannel
@@ -83,7 +83,7 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    set val(sample_id), file(input_cram), file(input_crai) from countsInChannel
+    tuple val(sample_id), file(input_cram), file(input_crai) from countsInChannel
 
     output:
     file "*.cpt.bed.gz" into countsOutChannel
@@ -193,7 +193,7 @@ process collectHSMetrics {
 
     input:
 
-    set val(sample_id), file(input_cram), file(input_crai) from hsMetricsInChannel
+    tuple val(sample_id), file(input_cram), file(input_crai) from hsMetricsInChannel
 
     output:
 
@@ -216,7 +216,8 @@ process collectISMetrics {
     label 'picardMetrics'
 
     input:
-    set val(sample_id), file(input_cram), file(input_crai) from isMetricsInChannel
+
+    tuple val(sample_id), file(input_cram), file(input_crai) from isMetricsInChannel
 
     output:
 
@@ -234,7 +235,10 @@ process collectISMetrics {
 }
 
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
+mergedMetricsInChannel.view { "sample: $it[0]; hsFILE: $it[1];  isFILE: $it[2]" }
 
+
+/*
 process MergeMetrics{
     publishDir "$params.outdir/Mergedmetrics/", pattern: "*_mergedMetrics.txt"
     label 'script'
@@ -254,7 +258,7 @@ process MergeMetrics{
     ${sample_id}_mergedMetrics.txt
     """
 }
-
+*/
 
 /*
 * Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
