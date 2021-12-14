@@ -188,7 +188,6 @@ process assignBioSex {
 
 process collectHSMetrics {
     publishDir "$params.outdir/HSmetrics/", pattern: "*hs_metrics.txt"
-
     label 'picardMetrics'
 
     input:
@@ -197,7 +196,7 @@ process collectHSMetrics {
 
     output:
 
-    tuple val(sample_id), file("${sample_id}"_hs_metrics.txt) into HSMetricsOuts
+    tuple val(sample_id), file(*hs_metrics.txt) into HSMetricsOuts
 
     script:
     """
@@ -221,7 +220,7 @@ process collectISMetrics {
 
     output:
 
-    tuple val(sample_id), file("${sample_id}"_is_metrics.txt) into ISMetricsOuts
+    tuple val(sample_id), file(*is_metrics.txt) into ISMetricsOuts
 
     script:
     """
