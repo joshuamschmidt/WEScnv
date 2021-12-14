@@ -59,7 +59,7 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from coverageInChannel
+    set val(sample_id), file(input_cram), file(input_crai) from coverageInChannel
 
     output:
     file "*regions.bed.gz" into coverageOutChannel
@@ -83,7 +83,7 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from countsInChannel
+    set val(sample_id), file(input_cram), file(input_crai) from countsInChannel
 
     output:
     file "*.cpt.bed.gz" into countsOutChannel
@@ -192,11 +192,11 @@ process collectHSMetrics {
 
     input:
 
-    set sample_id, file(input_cram), file(input_crai) from hsMetricsInChannel
+    set val(sample_id), file(input_cram), file(input_crai) from hsMetricsInChannel
 
     output:
 
-    tuple sample_id, "${sample_id}_hs_metrics.txt" into HSMetricsOuts
+    tuple val(sample_id), file("{$sample_id}"_hs_metrics.txt) into HSMetricsOuts
 
     script:
     """
@@ -215,11 +215,11 @@ process collectISMetrics {
     label 'picardMetrics'
 
     input:
-    set sample_id, file(input_cram), file(input_crai) from isMetricsInChannel
+    set val(sample_id), file(input_cram), file(input_crai) from isMetricsInChannel
 
     output:
 
-    tuple sample_id, "${sample_id}_is_metrics.txt" into ISMetricsOuts
+    tuple val(sample_id), file("{$sample_id}"_is_metrics.txt) into ISMetricsOuts
 
     script:
     """
@@ -239,25 +239,19 @@ process MergeMetrics{
     label 'script'
     input:
 
-    set val(sample_id), file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
+    set val(sample_id), file("${sample_id}"_hs_metrics.txt), file("${sample_id}"_is_metrics.txt) from mergedMetricsInChannel
 
     output:
 
-    set val(sample_id), file("${sample_id}_mergedMetrics.txt") into defineClustersInChannel
+    set val(sample_id), file("{$sample_id}"_mergedMetrics.txt) into defineClustersInChannel
 
     script:
     """
     #!/usr/bin/env bash
 
-    paste <(cut -f9,32,46,48,52,63,64 ${sample_id}_hs_metrics.txt) <(cut -f1,3,6,7 ${sample_id}_is_metrics.txt) >\
+    paste <(cut -f9,32,46,48,52,63,64 ${sample_id}_hs_metrics.txt) <(cut -f1,3,6,7 ${sample_id}_is_metrics.txt) > \
     ${sample_id}_mergedMetrics.txt
     """
-
-    /*
-    """
-    combineGATK-metrics.sh "$sample_id" ${sample_id}_hs_metrics.txt ${sample_id}_is_metrics.txt > ${sample_id}_mergedMetrics.txt;
-    """
-    */
 }
 
 
