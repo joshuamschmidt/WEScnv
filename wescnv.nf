@@ -239,7 +239,7 @@ process MergeMetrics{
     label 'script'
     input:
 
-    set val(sample_id), file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
+    set sample_id, file('"$sample_id"_hs_metrics.txt'), file('"$sample_id"_is_metrics.txt') from mergedMetricsInChannel
 
     output:
 
