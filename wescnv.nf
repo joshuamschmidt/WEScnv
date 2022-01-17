@@ -20,30 +20,6 @@ target_picard_list=params.target_picard
 bait_bed=params.bait_bed
 bait_picard_list=params.bait_picard
 
-/////////////////////////////////////////////////////////
-/* --          VALIDATE INPUT FILES                 -- */
-/////////////////////////////////////////////////////////
-
-
-
-if (params.reference_fasta) {
-    file(params.reference_fasta, checkIfExists: true)
-    lastPath = params.reference_fasta.lastIndexOf(File.separator)
-    lastExt = params.reference_fasta.lastIndexOf(".")
-    fasta_base = params.reference_fasta.substring(lastPath+1)
-    index_base = params.reference_fasta.substring(lastPath+1,lastExt)
-    if (params.reference_fasta.endsWith('.gz')) {
-        fasta_base = params.reference_fasta.substring(lastPath+1,lastExt)
-        index_base = fasta_base.substring(0,fasta_base.lastIndexOf("."))
-
-    }
-} else {
-    exit 1, "[WEScnv] error: please specify --fasta with the path to your reference"
-}
-
-
-
-
 
 Channel
     .fromPath(params.inputFile)
@@ -258,10 +234,13 @@ process MergeMetrics{
 }
 
 /*
-* Now, Let's take the fkpm data to find clusters of samples (define) sub-batches
-* and define which exons should be filtered from the analysis.
-* outputs plots of clusterings...
-* compare to ExomeDepth method?
+process defineProcessGroups {
+
+    input:
+    file input_files from defineClustersInChannel.collect()
+
+}
+
 */
 
 
