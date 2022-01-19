@@ -2,13 +2,14 @@
 infile=${1}
 prefix=${2}
 
+gunzip -dc "$infile" | awk '$1!="chrX" && $1!="chrY"' | gzip > tmp.gz
 # params for hmm. change Pr enter CNV to 1e-06 (1e-08)
 echo -e "1e-04\t6\t70\t-3\t1\t0\t1\t3\t1" > params.txt
 
-n_cols=$(zcat < "$infile" |head -n1 | cut -f 10- | awk '{print NF}')
-n_rows=$(zcat < "$infile" | sed '1d'  | wc -l)
-zcat < "$infile" | awk -v chr=$chr 'BEGIN {OFS='\t'; print "GATK._mean_cvg";} {if ($5 >= 0.2 && $5 <= 0.8) print $1":"$2"-"$3}' | sed '/^$/d' | transpose -t --limit "$n_rows"x1 | sed -e 's/[[:space:]]*$//g' > tmp_header.txt
-zcat < "$infile" | awk -v chr=$chr 'NR==1 || ($5 >= 0.2 && $5 <= 0.8)' | cut -f 10-  | transpose -t --limit "$n_rows"x"$n_cols" | sed -e 's/[[:space:]]*$//g' > tmp_data.txt
+n_cols=$(zcat < tmp.gz  |head -n1 | cut -f 10- | awk '{print NF}')
+n_rows=$(zcat < tmp.gz  | sed '1d'  | wc -l)
+zcat < tmp.gz | awk -v chr=$chr 'BEGIN {OFS='\t'; print "GATK._mean_cvg";} {if ($5 >= 0.1 && $5 <= 0.9) print $1":"$2"-"$3}' | sed '/^$/d' | transpose -t --limit "$n_rows"x1 | sed -e 's/[[:space:]]*$//g' > tmp_header.txt
+zcat < tmp.gz | awk -v chr=$chr 'NR==1 || ($5 >= 0.1 && $5 <= 0.9)' | cut -f 10-  | transpose -t --limit "$n_rows"x"$n_cols" | sed -e 's/[[:space:]]*$//g' > tmp_data.txt
 
 cat tmp_header.txt tmp_data.txt > "$prefix".txt
 rm tmp_header.txt && rm tmp_data.txt
@@ -30,7 +31,7 @@ xhmm --PCA -r ./"$DATA".filtered_centered.txt --PCAfiles ./"$DATA".PCA
 
 xhmm --normalize -r ./"$DATA".filtered_centered.txt --PCAfiles ./"$DATA".PCA \
 --normalizeOutput ./"$DATA".PCA_normalized.txt \
---PCnormalizeMethod PVE_mean --PVE_mean_factor 0.7
+--PCnormalizeMethod PVE_mean --PVE_mean_factor 0.9
 
 xhmm --matrix -r ./"$DATA".PCA_normalized.txt --centerData --centerType sample --zScoreData \
 -o ./"$DATA".PCA_normalized.filtered.sample_zscores.txt \
@@ -53,3 +54,5 @@ xhmm --genotype -p ./params.txt \
 -r ./"$DATA".PCA_normalized.filtered.sample_zscores.txt -R ./"$DATA".same_filtered.txt \
 -g ./"$DATA".xcnv \
 -v ./"$DATA".xhmm.calls.vcf
+
+rm tmp.gz
