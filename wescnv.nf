@@ -161,7 +161,7 @@ process assignBioSex {
     """
 }
 
-
+/*
 process collectHSMetrics {
     publishDir "$params.outdir/HSmetrics/", pattern: "*hs_metrics.txt"
     label 'picardMetrics'
@@ -185,7 +185,9 @@ process collectHSMetrics {
       TARGET_INTERVALS=$target_picard_list
     """
 }
+*/
 
+/*
 process collectISMetrics {
     publishDir "$params.outdir/ISmetrics/", pattern: "*is_metrics*"
     label 'picardMetrics'
@@ -208,7 +210,9 @@ process collectISMetrics {
       H="$sample_id"_is_metrics.pdf
     """
 }
+*/
 
+/*
 mergedMetricsInChannel = HSMetricsOuts.join(ISMetricsOuts, failOnDuplicate: true, failOnMismatch: true)
 
 process MergeMetrics{
@@ -232,6 +236,7 @@ process MergeMetrics{
     paste tmp_name tmp_hs tmp_is > "$sample_id"_mergedMetrics.txt
     """
 }
+*/
 
 /*
 process defineProcessGroups {
@@ -240,8 +245,8 @@ process defineProcessGroups {
     file input_files from defineClustersInChannel.collect()
 
 }
-
 */
+
 
 
 /*process filterCounts {
