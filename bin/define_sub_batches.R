@@ -1,10 +1,9 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 pacman::p_load(data.table,FNN,stringdist,cluster,svglite,ggplot2,ggrepel,factoextra,install=T,update=F)
-setDTthreads(threads=4)
+
 
 fpkm_file=args[1]
-batch=args[2]
 
 # k-medoids
 fpkm <- fread(fpkm_file,header=T)
