@@ -13,4 +13,5 @@ RUN install2.r -e svglite
 RUN install2.r -e ggplot2
 RUN install2.r -e ggrepel
 RUN install2.r -e factoextra
+RUN install2.r -e pacman
 WORKDIR /data

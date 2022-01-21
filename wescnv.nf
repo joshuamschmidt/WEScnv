@@ -130,7 +130,7 @@ process aggregateFpkm {
     file input_files from aggregateFpkm_ch.collect()
 
     output:
-    file "${batch}.fkpm.bed.gz"
+    file "${batch}.fkpm.bed.gz" into fkpm_out_channel
 
     script:
     """
@@ -238,14 +238,27 @@ process MergeMetrics{
 }
 */
 
-/*
+fkpm_file = fkpm_out_channel.first()
+
 process defineProcessGroups {
+    publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg"
+    publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt"
 
     input:
-    file input_files from defineClustersInChannel.collect()
+    file fkpm_file
+
+    output:
+    path "*.cpt.bed.gz" into defineProcessGroups_out_channel
+    path "*100nns.txt" into defineTargetReferences_out_channel
+
+    script:
+    """
+    define_sub_batches.R $input_file ${batch}
+    """
 
 }
-*/
+
+
 
 
 

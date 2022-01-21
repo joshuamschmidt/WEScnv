@@ -1,105 +1,94 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
-library(data.table)
-library(FNN)
-library(stringdist)
-library(cluster)
-library(svglite)
-library(ggplot2)
-library(ggrepel)
-library(factoextra)
-setDTthreads(threads=1)
+pacman::p_load(data.table,FNN,stringdist,cluster,svglite,ggplot2,ggrepel,factoextra,install=T,update=F)
+setDTthreads(threads=4)
 
-files=args
+fpkm_file=args[1]
+batch=args[2]
 
-qc <- data.table()
-for (f in files){
- tmp <- fread(f)
-qc <- rbindlist(list(qc,tmp))
-}
+# k-medoids
+fpkm <- fread(fpkm_file,header=T)
+setnames(fpkm, old=c("CHR","START","END"), new=c("chromosome","start","end"))
+fpkm <- fpkm[chromosome %in% paste0("chr",1:22)]
+# 20% of data for cluster inference
+sample_N = round(fpkm[,.N]/5)
+fpkm_sub <- fpkm[sample(.N,size=sample_N,replace=F)][,-(1:9)]
+fpkm_subM <- t(as.matrix(fpkm_sub))
+no_data <- which(colSums(fpkm_subM)==0)
+fpkm_subM <- fpkm_subM[,-no_data]
+fpkm_subM <- scale(fpkm_subM,center=T,scale=T)
+k_stats <- fviz_nbclust(fpkm_subM, pam,method = 'silhouette',k.max = 10)
 
-# Create a scaled copy of the data frame
-qc.scaled <- as.data.frame(qc)
-for (i in 2:ncol(qc.scaled)) {
-    mini <- min(qc.scaled[,i])
-    maxi <- max(qc.scaled[,i])
-    qc.scaled[,i] <- apply(qc.scaled, 1, function(row) {
-    row[[i]] <- (as.numeric(row[[i]]) - mini) / (maxi - mini)
-  } )
-}
+best_k <- k_stats$data$clusters[which(k_stats$data$y==max(k_stats$data$y))]
+pam.res <- pam(fpkm_subM, best_k)
+clusterDT <- data.table(id=names(pam.res$clustering),cluster=pam.res$clustering)
 
 
-# k medoids
-x <- as.matrix(qc[,2:12])
-row.names(x) <- qc$V1
-k_stats <- fviz_nbclust(x, pam,method = 'silhouette',stand=T,k.max = 15)
-svglite("optimal-k.svg", width = 10, height = 10)
+# k medoids plots
+svglite("optimal-k-medoid-clusters.svg", width = 10, height = 10)
 k_stats
 dev.off()
 
-
-best_k <- which(k_stats$data$y==max(k_stats$data$y))
-pam.res <- pam(x, best_k)
-dd <- cbind(x, cluster = pam.res$cluster)
-
-svglite("k-medoid-clusters.svg", width = 10, height = 10)
+svglite("k-medoid-clusters.svg", width = 15, height = 15)
 fviz_cluster(pam.res,
              ellipse.type = "t", # Concentration ellipse
              repel = TRUE, # Avoid label overplotting (slow)
              ggtheme = theme_bw(),
-             labelsize = 4,
-             pointsize = 0.5
+             labelsize = 5,
+             pointsize=0.75
+
 )
 dev.off()
 
+# Get 100-nearest neighbors for each sample
 
-# Get k-nearest neighbors for each sample
 k.param <- 100
-knns <- get.knn(qc.scaled[,c(seq(2,ncol(qc.scaled)))],k=k.param,algorithm="kd_tree")
-
+knns <- get.knn(fpkm_subM,k=k.param,algorithm="kd_tree")
 
 # Generate a single file for each sample listing its k-nearest neighbor sample IDs
-qc.scaled$n_ref <- 0
-for (i in 1:nrow(qc.scaled)) {
-    i_sample <- qc.scaled$V1[i]
-    nn.sampleids <- qc.scaled$V1[ knns$nn.index[i,] ]
-    closest <- which( knns$nn.dist[i,] <= 0.5)
-    if(length(closest) < 20) {
-      nn.sampleids <- nn.sampleids[1:20]
-    } else{
-      nn.sampleids <- nn.sampleids[closest]
-    }
+#fpkm_subM <- cbind(fpkm_subM,rep.int(0,times=dim(fpkm_subM)[1]))
+fpkm_subM <- as.data.table(fpkm_subM,keep.rownames = "id")
+fpkm_cols <- grep('^V',names(fpkm_subM))
+
+for (i in 1:fpkm_subM[,uniqueN(id)]) {
+    i_sample <- fpkm_subM[i,id]
+    med_cluster <- clusterDT[id==i_sample,cluster]
+    nn.indexs <- knns$nn.index[i,]
+    nn.clusters <- clusterDT[nn.indexs, cluster]
+    # in same k-medoid cluster
+    correct_cluster <- which(nn.clusters==med_cluster)
+    nn.indexs <- nn.indexs[correct_cluster]
+    nn.sampleids <- fpkm_subM[ nn.indexs, id ]
     # catch any very closely named - either dups or family members
     non_rel <- which(stringsim(i_sample, nn.sampleids,method = 'lcs') < 0.85)
-    fname <- paste(qc.scaled$V1[i], ".", k.param, "nns.txt", sep="")
-    fwrite(x=data.table(sample_id=c(i_sample,nn.sampleids[non_rel])),
-           file=fname,col.names=T, row.names=F,quote=F,sep="\t")
-    qc.scaled[i,]$n_ref <- length(nn.sampleids[non_rel])
+    nn.indexs <- nn.indexs[non_rel]
+    nn.sampleids <- nn.sampleids[non_rel]
+    fname <- paste(i_sample, ".", k.param, "nns.txt", sep="")
+    fwrite(x=data.table(sample_id=c(i_sample,nn.sampleids)),
+         file=fname,col.names=T, row.names=F,quote=F,sep="\t")
+    fpkm_subM[i,n_ref:=length(nn.sampleids)]
+    # mean distance of reference samples
+    center <- colMeans(fpkm_subM[nn.indexs, ..fpkm_cols]);
+    mean_dist <- as.numeric(dist(rbind(as.numeric(fpkm_subM[i, ..fpkm_cols]), as.numeric(center))))
+    fpkm_subM[i,DistanceToReferenceSet:=mean_dist]
 }
-
-# plot of the cum distributon of mean differences....
-qc.scaled$DistanceToClusterMean <- sapply(1:nrow(qc.scaled),  function(x) {
-    this.knns <- knns$nn.index[x,];
-    center <- colMeans(qc.scaled[this.knns, 2:(ncol(qc.scaled)-1)]);
-    return(as.numeric(dist(rbind(as.numeric(qc.scaled[x, 2:(ncol(qc.scaled)-1)]), as.numeric(center)))))
-})
-
-
-qc.scaled <- as.data.table(qc.scaled)
-qc.scaled$label <- qc$V1
-qc.scaled[qc.scaled$DistanceToClusterMean < 0.75,]$label <- ""
-e = ecdf(qc.scaled$DistanceToClusterMean)
-qc.scaled[,`ecdf(NN_distance)`:=e(DistanceToClusterMean)]
-
+e = ecdf(fpkm_subM$DistanceToReferenceSet)
+fpkm_subM[,`ecdf(NN_distance)`:=e(DistanceToReferenceSet)]
+clusterDT <- clusterDT[fpkm_subM[, !..fpkm_cols],on=.(id)]
+clusterDT[,`k-medoid Cluster`:=paste0("cluster_",cluster)]
+clusterDT[,`top 10% ref distance`:=ifelse(`ecdf(NN_distance)`> 0.9,"YES","NO")]
+clusterDT[,label:=ifelse(`ecdf(NN_distance)`> 0.9,id,"")]
 # Plot distance distribution
 
+svglite("knn-distance-cluster-ref_n.svg", width = 15, height = 10)
+ggplot(clusterDT, aes(x=DistanceToReferenceSet,y=`k-medoid Cluster`,color=`k-medoid Cluster`)) + geom_jitter(aes(size = n_ref),alpha=0.5) + theme_bw()
+dev.off()
+
+
 svglite("knn-distance-distribution.svg", width = 10, height = 10)
-ggplot(qc.scaled, aes(DistanceToClusterMean)) +
-  stat_ecdf() + theme_bw() + geom_text_repel(data = qc.scaled, aes(DistanceToClusterMean,`ecdf(NN_distance)`, label=label ),max.overlaps = 50,size=2)
+ggplot(clusterDT, aes(x=DistanceToReferenceSet,y=`ecdf(NN_distance)`,color=`k-medoid Cluster`)) + geom_point(alpha=0.5) + theme_bw() + geom_text_repel(data = clusterDT, aes(DistanceToReferenceSet,`ecdf(NN_distance)`, label=label ),max.overlaps = 50,size=2)
 dev.off()
 
 # write table of metrics.....
-mediodDT <- data.table(sample_id=rownames(dd),med_cluster=dd[,"cluster"])
-knndistDT <- data.table(sample_id=qc.scaled$V1,mean_dist=qc.scaled$DistanceToClusterMean,ecdf=qc.scaled[,`ecdf(NN_distance)`],n_ref=qc.scaled$n_ref)
-fwrite(x=mediodDT[knndistDT,on=.(sample_id)],
+fwrite(x=clusterDT[,.(sample_id=id,cluster,n_ref,DistanceToReferenceSet,`ecdf(NN_distance)`)],
        file="knn-kmedoid-stats.txt",col.names=T, row.names=F,quote=F,sep="\t")
