@@ -14,4 +14,5 @@ RUN install2.r -e ggplot2
 RUN install2.r -e ggrepel
 RUN install2.r -e factoextra
 RUN install2.r -e pacman
+RUN install2.r -e R.utils
 WORKDIR /data
