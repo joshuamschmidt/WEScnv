@@ -9,14 +9,14 @@ fpkm_file=args[1]
 fpkm <- fread(fpkm_file,header=T)
 setnames(fpkm, old=c("CHR","START","END"), new=c("chromosome","start","end"))
 fpkm <- fpkm[chromosome %in% paste0("chr",1:22)]
-# 20% of data for cluster inference
-sample_N = round(fpkm[,.N]/5)
+# 10% of data for cluster inference
+sample_N = round(fpkm[,.N]/10)
 fpkm_sub <- fpkm[sample(.N,size=sample_N,replace=F)][,-(1:9)]
 fpkm_subM <- t(as.matrix(fpkm_sub))
 no_data <- which(colSums(fpkm_subM)==0)
 fpkm_subM <- fpkm_subM[,-no_data]
 fpkm_subM <- scale(fpkm_subM,center=T,scale=T)
-k_stats <- fviz_nbclust(fpkm_subM, pam,method = 'silhouette',k.max = 10)
+k_stats <- fviz_nbclust(fpkm_subM, pam,method = 'silhouette',k.max = 5)
 
 best_k <- k_stats$data$clusters[which(k_stats$data$y==max(k_stats$data$y))]
 pam.res <- pam(fpkm_subM, best_k)
