@@ -161,7 +161,6 @@ process assignBioSex {
     """
 }
 
-
 process defineProcessGroups {
     publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg"
     publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt"
@@ -172,6 +171,7 @@ process defineProcessGroups {
     output:
     path "*stats.txt" into defineProcessGroups_out_channel
     path "*100nns.txt" into defineTargetReferences_out_channel
+    path "*.svg"
 
     script:
     """
@@ -180,3 +180,8 @@ process defineProcessGroups {
 
 }
 
+/*
+process splitCountsByGroup {
+
+}
+*/
