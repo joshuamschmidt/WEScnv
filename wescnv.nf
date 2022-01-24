@@ -162,7 +162,6 @@ process assignBioSex {
 }
 
 
-
 process defineProcessGroups {
     publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg"
     publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt"
@@ -171,12 +170,12 @@ process defineProcessGroups {
     file fkpm_file from fkpm_out_channel
 
     output:
-    path "*.cpt.bed.gz" into defineProcessGroups_out_channel
+    path "*stats.txt" into defineProcessGroups_out_channel
     path "*100nns.txt" into defineTargetReferences_out_channel
 
     script:
     """
-    define_sub_batches.R $fkpm_file ${batch}
+    define_sub_batches.R $fkpm_file
     """
 
 }
