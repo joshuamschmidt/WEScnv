@@ -7,29 +7,23 @@ library(ExomeDepth)
 # from ARGV
 counts <- fread(args[1],header=T)
 setnames(counts, old=c("CHR","START","END"), new=c("chromosome","start","end"))
-test_sample <- args[2]
-candidate_ref_set <- args[3]
-candidate_ref_set <- strsplit(candidate_ref_set,split = ",")[[1]]
 counts <- counts[chromosome %in% paste0("chr",1:22)]
 counts <- counts[!MAP100 %in% NaN]
-# construct reference set for the sample....
-exomes <- names(counts)[-(1:9)]
-exome_matrix <- as.matrix(counts[, ..exomes])
-colnames(exome_matrix) <- exomes
-rownames(exome_matrix) <- counts$TARGET
-exome_matrix <- t(exome_matrix)
-exome_matrix <- exome_matrix / rowSums(exome_matrix)
 
-ref_samples <- exomes[!exomes %in% test_sample]
+# test and reference exomes
+test_candidate_ref_set <- fread(args[2],header=T)
+test_sample <- test_candidate_ref_set[1,sample_id]
+candidate_ref_set <- test_candidate_ref_set[!sample_id %in% test_sample,sample_id]
+# construct reference set for the sample....
+
 test.exome <- counts[,get(test_sample)]
 ref.exomes <- as.matrix(counts[, ..candidate_ref_set])
-#all_zeros <- which(rowSums(ref.exomes)==0)
 my.choice <- select.reference.set(test.counts = test.exome,
                                   reference.counts = ref.exomes,
                                   bin.length = (counts$end - counts$start)/1000,
                                   data = counts[,.(MAP100,GC,GC500,WIDTH)],
                                   formula = 'cbind(test, reference) ~ 1 + MAP100 + GC+ GC500 + WIDTH',
-                                  n.bins.reduced = 5000)
+                                  n.bins.reduced = 20000)
 best_ref_set <- my.choice$reference.choice
 n_ref_set <- length(best_ref_set)
 my.matrix <- as.matrix(counts[, ..best_ref_set])
@@ -45,13 +39,8 @@ all.exons <- new('ExomeDepth',
                  phi.bins=1)
 
 
-# counts$CHR <- gsub(as.character(counts$chr),
-#                                    pattern = 'chr',
-#                                   replacement = '')
-
-
 all.exons <- CallCNVs(x = all.exons,
-                      transition.probability = 10^-4,
+                      transition.probability = 10^-3,
                       chromosome = gsub(as.character(counts$chr),
                                         pattern = 'chr',
                                         replacement = ''),
