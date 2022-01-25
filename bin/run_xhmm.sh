@@ -38,7 +38,7 @@ xhmm --matrix -r ./"$prefix".txt \
 
 xhmm --discover -p ./params.txt \
 -r ./"$prefix".PCA_normalized.filtered.sample_zscores.txt -R ./"$prefix".same_filtered.txt \
--c ./"$prefix".xcnv -a ./"$prefix".aux_xcnv -s ./"$prefix"
+-c ./"$prefix".xcnv -a ./"$prefix".aux_xcnv -s ./"$coverageFile"
 
 xhmm --genotype -p ./params.txt \
 -r ./"$prefix".PCA_normalized.filtered.sample_zscores.txt -R ./"$prefix".same_filtered.txt \
