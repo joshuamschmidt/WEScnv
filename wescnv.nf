@@ -225,18 +225,20 @@ process runXhmm {
     // posteriors?
 }
 
-/*
+
 defineTargetReferences_out_channel.into { exomeDepthReferences;  }
 
 
 process runExomeDepth{
-    publishDir "$params.outdir/ExomeDepth_calls/"
+    publishDir "$params.outdir/ExomeDepth_calls/", pattern: "*calls.bed"
+    publishDir "$params.outdir/ExomeDepth_refsets/", pattern: "*.reference.txt"
 
     input:
     file counts_file from counts_out_channel
     file reference_set from exomeDepthReferences.flatten()
 
     output:
-
+    path "*calls.bed"
+    path "*.reference.txt"
 }
-*/
+

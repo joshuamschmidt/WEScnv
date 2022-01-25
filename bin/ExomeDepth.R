@@ -9,7 +9,7 @@ counts <- fread(args[1],header=T)
 setnames(counts, old=c("CHR","START","END"), new=c("chromosome","start","end"))
 counts <- counts[chromosome %in% paste0("chr",1:22)]
 counts <- counts[!MAP100 %in% NaN]
-
+counts <- counts[order(chromosome,start,end)]
 # test and reference exomes
 test_candidate_ref_set <- fread(args[2],header=T)
 test_sample <- test_candidate_ref_set[1,sample_id]
@@ -23,7 +23,7 @@ my.choice <- select.reference.set(test.counts = test.exome,
                                   bin.length = (counts$end - counts$start)/1000,
                                   data = counts[,.(MAP100,GC,GC500,WIDTH)],
                                   formula = 'cbind(test, reference) ~ 1 + MAP100 + GC+ GC500 + WIDTH',
-                                  n.bins.reduced = 20000)
+                                  n.bins.reduced = 30000)
 best_ref_set <- my.choice$reference.choice
 n_ref_set <- length(best_ref_set)
 my.matrix <- as.matrix(counts[, ..best_ref_set])
@@ -40,7 +40,7 @@ all.exons <- new('ExomeDepth',
 
 
 all.exons <- CallCNVs(x = all.exons,
-                      transition.probability = 10^-3,
+                      transition.probability = 5e-04,
                       chromosome = gsub(as.character(counts$chr),
                                         pattern = 'chr',
                                         replacement = ''),
@@ -60,6 +60,13 @@ all.exons <- AnnotateExtra(x = all.exons,
                            min.overlap = 0.00001,
                            column.name = 'exons.hg38')
 calls <- data.table(all.exons@CNV.calls[ order ( all.exons@CNV.calls$BF, decreasing = TRUE),])[order(-BF)]
-
-
-stringdist("abc","abcd", method = "lv")
+calls <- calls[BF >0]
+reorder <- names(calls)[c(7,5:6,3,8:13,1,2,4)]
+setcolorder(calls, reorder)
+calls[,start:=start-1]
+calls[,chromosome:=paste0("chr",chromosome)]
+setorder(calls, chromosome, start, end)
+outfile <- paste(test_sample,"ExomeDepth-CNV.calls.bed",sep="_")
+fwrite(calls,outfile,sep="\t",col.names = F, row.names = F, quote = F)
+outfile <- paste(test_sample,"ExomeDepth-CNV.reference.txt",sep="_")
+write.table(x=best_ref_set,file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
