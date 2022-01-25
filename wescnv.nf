@@ -204,7 +204,6 @@ process runXhmm {
 
     input:
     path coverage_file from xhmmInChannel
-    path clusters_file from defineProcessGroups_out_channel
 
     output:
     path "*filtered_targets.txt"
@@ -215,7 +214,7 @@ process runXhmm {
 
     script:
     """
-    run_xhmm.sh $coverage_file $clusters_file
+    run_xhmm.sh $coverage_file
     """
 }
 
