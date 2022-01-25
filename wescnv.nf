@@ -204,6 +204,7 @@ process runXhmm {
 
     input:
     path coverage_file from xhmmInChannel
+    path clusters_file from defineProcessGroups_out_channel
 
     output:
     path "*filtered_targets.txt"
