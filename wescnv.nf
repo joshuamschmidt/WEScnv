@@ -198,7 +198,10 @@ process prepareXhmmInput {
 process runXhmm {
     publishDir "$params.outdir/XHMM_metrics/", pattern: "*filtered_targets.txt"
     publishDir "$params.outdir/XHMM_metrics/", pattern: "*filtered_samples.txt"
-    publishDir "$params.outdir/XHMM_metrics/", pattern: "*.PCA"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*PCA.PC.txt"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*PCA.PC_LOADINGS.txt"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*PCA.PC_SD.txt"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*num_removed_PC.txt"
     publishDir "$params.outdir/XHMM_calls/", pattern: "*calls.vcf"
     publishDir "$params.outdir/XHMM_calls/", pattern: "*xcnv"
 
@@ -208,7 +211,10 @@ process runXhmm {
     output:
     path "*filtered_targets.txt"
     path "*filtered_samples.txt"
-    path "*.PCA"
+    path "*.PCA.PC.txt"
+    path "*.PCA.PC_LOADINGS.txt"
+    path "*.PCA.PC_SD.txt"
+    path "*.num_removed_PC.txt"
     path "*calls.vcf"
     path "*xcnv"
 
