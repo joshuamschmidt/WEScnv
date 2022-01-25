@@ -1,7 +1,7 @@
 #!/usr/bin/env ash
 coverageFile=${1}
 
-cluster=$(echo $prefix | tr '_' '\t' | cut -f2)
+cluster=$(echo "$coverageFile" | tr '_' '\t' | cut -f2)
 prefix=$(echo 'cluster_'"$cluster"'_xhmm')
 # params for hmm. change Pr enter CNV to 1e-07 (1e-08)
 echo -e "1e-07\t6\t70\t-3\t1\t0\t1\t3\t1" > params.txt
