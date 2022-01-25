@@ -240,5 +240,10 @@ process runExomeDepth{
     output:
     path "*calls.bed"
     path "*.reference.txt"
+
+    script:
+    """
+    ExomeDepth.R $counts_file $reference_set
+    """
 }
 
