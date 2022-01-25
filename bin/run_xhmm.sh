@@ -29,7 +29,7 @@ xhmm --matrix -r ./"$prefix".PCA_normalized.txt --centerData --centerType sample
 --outputExcludedSamples ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_samples.txt \
 --maxSdTargetRD 30
 
-xhmm --matrix -r ./"$prefix".txt \
+xhmm --matrix -r ./"$coverageFile" \
 --excludeTargets ./"$prefix".filtered_centered.txt.filtered_targets.txt \
 --excludeTargets ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_targets.txt \
 --excludeSamples ./"$prefix".filtered_centered.txt.filtered_samples.txt \
