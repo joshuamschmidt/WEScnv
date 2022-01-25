@@ -13,8 +13,8 @@ xhmm --matrix -r ./"$coverageFile" --centerData --centerType target \
 --outputExcludedTargets ./"$prefix".filtered_centered.txt.filtered_targets.txt \
 --outputExcludedSamples ./"$prefix".filtered_centered.txt.filtered_samples.txt \
 --minTargetSize 10 --maxTargetSize 10000 \
---minMeanTargetRD 15 --maxMeanTargetRD 1000 \
---minMeanSampleRD 15 --maxMeanSampleRD 200 \
+--minMeanTargetRD 10 --maxMeanTargetRD 1000 \
+--minMeanSampleRD 10 --maxMeanSampleRD 200 \
 --maxSdSampleRD 150
 
 xhmm --PCA -r ./"$prefix".filtered_centered.txt --PCAfiles ./"$prefix".PCA
@@ -23,7 +23,7 @@ xhmm --normalize -r ./"$prefix".filtered_centered.txt --PCAfiles ./"$prefix".PCA
 --normalizeOutput ./"$prefix".PCA_normalized.txt \
 --PCnormalizeMethod PVE_mean --PVE_mean_factor 0.7
 
-xhmm --matrix -r ./"$prefix".PCA_normalized.txt --centerData --centerType sample --zScoreprefix \
+xhmm --matrix -r ./"$prefix".PCA_normalized.txt --centerData --centerType sample --zScoreData \
 -o ./"$prefix".PCA_normalized.filtered.sample_zscores.txt \
 --outputExcludedTargets ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_targets.txt \
 --outputExcludedSamples ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_samples.txt \
