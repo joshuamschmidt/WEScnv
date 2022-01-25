@@ -1,5 +1,0 @@
-sample_id	input_cram	input_crai
-AG0004	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0004.cram	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0004.cram.crai
-AG0008	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0008.cram	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0008.cram.crai
-AG0009	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0009.cram	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0009.cram.crai
-AG0011	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0011.cram	/paella/CRAMPipeline/projects/Glucoma/batch01/crams/C3DKRACXX_2_AG0011.cram.crai

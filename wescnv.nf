@@ -222,5 +222,19 @@ process runXhmm {
     """
     run_xhmm.sh $coverage_file
     """
+    // posteriors?
 }
 
+defineTargetReferences_out_channel.into { exomeDepthReferences;  }
+
+
+process runExomeDepth{
+    publishDir "$params.outdir/ExomeDepth_calls/"
+
+    input:
+    file counts_file from counts_out_channel
+    file reference_set from exomeDepthReferences.flatten()
+
+    output:
+
+}
