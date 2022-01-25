@@ -203,7 +203,7 @@ process runXhmm {
     publishDir "$params.outdir/XHMM_calls/", pattern: "*xcnv"
 
     input:
-    file coverage_file from xhmmInChannel
+    file coverage_file from xhmmInChannel.flatten()
 
     output:
     path "*filtered_targets.txt"

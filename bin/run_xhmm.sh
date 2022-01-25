@@ -8,7 +8,7 @@ echo -e "1e-07\t6\t70\t-3\t1\t0\t1\t3\t1" > params.txt
 
 #docker run -u $(id -u):$(id -g) --rm -v $(pwd):/app --rm -ti joshmschmidt/xhmm /bin/bash
 
-xhmm --matrix -r ./"$coverageFile" --centerprefix --centerType target \
+xhmm --matrix -r ./"$coverageFile" --centerData --centerType target \
 -o ./"$prefix".filtered_centered.txt \
 --outputExcludedTargets ./"$prefix".filtered_centered.txt.filtered_targets.txt \
 --outputExcludedSamples ./"$prefix".filtered_centered.txt.filtered_samples.txt \
@@ -23,7 +23,7 @@ xhmm --normalize -r ./"$prefix".filtered_centered.txt --PCAfiles ./"$prefix".PCA
 --normalizeOutput ./"$prefix".PCA_normalized.txt \
 --PCnormalizeMethod PVE_mean --PVE_mean_factor 0.7
 
-xhmm --matrix -r ./"$prefix".PCA_normalized.txt --centerprefix --centerType sample --zScoreprefix \
+xhmm --matrix -r ./"$prefix".PCA_normalized.txt --centerData --centerType sample --zScoreprefix \
 -o ./"$prefix".PCA_normalized.filtered.sample_zscores.txt \
 --outputExcludedTargets ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_targets.txt \
 --outputExcludedSamples ./"$prefix".PCA_normalized.filtered.sample_zscores.txt.filtered_samples.txt \
