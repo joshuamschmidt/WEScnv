@@ -187,7 +187,7 @@ process prepareXhmmInput {
     path clusters_file from defineProcessGroups_out_channel
 
     output:
-    file "*xhmm.in.txt" into xhmmInChannel
+    file '*xhmm.in.txt' into xhmmInChannel
 
     script:
     """
