@@ -195,18 +195,26 @@ process prepareXhmmInput {
     """
 }
 
-/*
 process runXhmm {
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*filtered_targets.txt"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*filtered_samples.txt"
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*.PCA"
+    publishDir "$params.outdir/XHMM_calls/", pattern: "*calls.vcf"
+    publishDir "$params.outdir/XHMM_calls/", pattern: "*xcnv"
 
     input:
     path input_file from xhmmInChannel
 
     output:
+    path "*filtered_targets.txt"
+    path "*filtered_samples.txt"
+    path "*.PCA"
+    path "*calls.vcf"
+    path "*xcnv"
 
     script:
     """
     run_xhmm.sh $coverage_file $clusters_file
     """
-
 }
-*/
+
