@@ -203,5 +203,10 @@ process runXhmm {
 
     output:
 
+    script:
+    """
+    run_xhmm.sh $coverage_file $clusters_file
+    """
+
 }
 */
