@@ -225,6 +225,7 @@ process runXhmm {
     // posteriors?
 }
 
+/*
 defineTargetReferences_out_channel.into { exomeDepthReferences;  }
 
 
@@ -238,3 +239,4 @@ process runExomeDepth{
     output:
 
 }
+*/
