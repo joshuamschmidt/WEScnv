@@ -88,7 +88,7 @@ process aggregateCoverage {
     file input_files from coverageOutChannel.collect()
 
     output:
-    file "${batch}.coverage.bed.gz"
+    file "${batch}.coverage.bed.gz" into coverage_out_channel
 
     script:
     """
@@ -109,7 +109,7 @@ process aggregateCounts {
     file input_files from aggregateCounts_ch.collect()
 
     output:
-    file "${batch}.counts.bed.gz"
+    file "${batch}.counts.bed.gz" into counts_out_channel
 
     script:
     """
@@ -180,8 +180,28 @@ process defineProcessGroups {
 
 }
 
+process prepareXhmmInput {
+
+    input:
+    path coverage_file from coverage_out_channel
+    path clusters_file from defineProcessGroups_out_channel
+
+    output:
+    path "*xhmm.in.txt" into xhmmInChannel
+
+    script:
+    """
+    xhmm_input.R $coverage_file $clusters_file
+    """
+}
+
 /*
-process splitCountsByGroup {
+process runXhmm {
+
+    input:
+    path input_file from xhmmInChannel
+
+    output:
 
 }
 */
