@@ -37,11 +37,6 @@ RUN git clone https://bitbucket.org/statgen/xhmm.git && \
   chmod a+x /tmp/xhmm/build/execs/xhmm && \
   mv /tmp/xhmm/build/execs/xhmm /usr/local/bin/
 
-COPY transpose.c .
-
-RUN gcc transpose.c -o transpose && \
-  cp transpose /usr/local/bin/
-
 FROM alpine:3.15
 
 RUN apk update && \
@@ -51,5 +46,4 @@ RUN apk update && \
   apk add libstdc++
 
 COPY --from=builder /usr/local/bin/xhmm /usr/local/bin/
-COPY --from=builder /usr/local/bin/transpose /usr/local/bin/
 WORKDIR /app
