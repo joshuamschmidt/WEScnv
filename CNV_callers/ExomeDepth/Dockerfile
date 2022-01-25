@@ -4,7 +4,7 @@ FROM rocker/r-ver:4.1
 
 MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 
-RUN install2.r -e data.table stringdist
+RUN install2.r -e data.table pacman
 RUN install2.r -e BiocManager
 ENV BIOC /usr/local/lib/R/site-library/littler/examples
 
@@ -14,8 +14,4 @@ RUN apt-get update && apt-get upgrade -y && \
 RUN "$BIOC"/installBioc.r Biostrings IRanges Rsamtools GenomicRanges GenomicAlignments
 RUN install2.r -e  ExomeDepth
 
-CMD ["/bin/bash"]
-
-COPY ExomeDepth.R /usr/local/bin
-
-RUN chmod +x /usr/local/bin/ExomeDepth.R
+WORKDIR /app

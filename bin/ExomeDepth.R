@@ -1,9 +1,6 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
-library(stringdist)
-library(data.table)
-library(ExomeDepth)
-
+pacman::p_load('data.table','ExomeDepth',install = F, update = F)
 # from ARGV
 counts <- fread(args[1],header=T)
 setnames(counts, old=c("CHR","START","END"), new=c("chromosome","start","end"))
