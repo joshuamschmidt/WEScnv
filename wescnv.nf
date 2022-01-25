@@ -191,7 +191,7 @@ process prepareXhmmInput {
 
     script:
     """
-    xhmm_input.R $coverage_file $clusters_file
+    make_xhmm_input.R $coverage_file $clusters_file
     """
 }
 
