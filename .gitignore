@@ -7,3 +7,4 @@ qc/
 inputFiles.txt
 .nextflow/
 .nextflow*
+.DS_Store
