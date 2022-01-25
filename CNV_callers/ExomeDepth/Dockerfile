@@ -13,5 +13,5 @@ RUN apt-get update && apt-get upgrade -y && \
 # ExomeDepth
 RUN "$BIOC"/installBioc.r Biostrings IRanges Rsamtools GenomicRanges GenomicAlignments
 RUN install2.r -e  ExomeDepth
-
+RUN install2.r -e R.utils
 WORKDIR /app
