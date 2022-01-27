@@ -152,7 +152,7 @@ process assignBioSex {
     file input_files from coverageSummaryChannel.collect()
 
     output:
-    file "${batch}_bioSex-Assignment.txt"
+    file "${batch}_bioSex-Assignment.txt" into assignedSexChannel
 
     script:
     """
@@ -226,7 +226,7 @@ process runXhmm {
 }
 
 
-defineTargetReferences_out_channel.into { exomeDepthReferences;  }
+defineTargetReferences_out_channel.into { exomeDepthReferences;  exomeDepthReferencesXchr }
 
 
 process runExomeDepth{
@@ -246,6 +246,26 @@ process runExomeDepth{
     ExomeDepth.R $counts_file $reference_set
     """
 }
+
+process runExomeDepthXchr{
+    publishDir "$params.outdir/ExomeDepth_calls_Xchr/", pattern: "*calls.bed"
+    publishDir "$params.outdir/ExomeDepth_refsets_Xchr/", pattern: "*.reference.txt"
+
+    input:
+    file bio_sex from assignedSexChannel
+    file counts_file from counts_out_channel
+    file reference_set from exomeDepthReferencesXchr.flatten()
+
+    output:
+    path "*calls.bed"
+    path "*.reference.txt"
+
+    script:
+    """
+    ExomeDepthX.R $counts_file $reference_set $bio_sex
+    """
+}
+
 
 /*
 Channel
