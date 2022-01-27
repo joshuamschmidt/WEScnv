@@ -247,3 +247,25 @@ process runExomeDepth{
     """
 }
 
+/*
+Channel
+      .fromPath("$projectDir/assets/clamms_special_regions.grch38.bed")
+      .set {clammsSpecialRegionsChannel}
+
+process makeCLAMMSWindows {
+
+    input:
+    path special_regions from clammsSpecialRegionsChannel
+
+    output:
+    path "windows.bed"
+
+    script:
+    """
+    sed -e 's/^chr//g' $target_bed | awk > target_nochr.bed;
+
+
+    """
+
+}
+*/
