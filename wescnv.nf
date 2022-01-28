@@ -181,13 +181,14 @@ process defineProcessGroups {
 }
 
 process prepareXhmmInput {
-
+    publishDir "$params.outdir/XHMM_metrics/", pattern: "*XHMM.samples.txt"
     input:
     path coverage_file from coverage_out_channel
     path clusters_file from defineProcessGroups_out_channel
 
     output:
     file '*xhmm.in.txt' into xhmmInChannel
+    file "*XHMM.samples.txt"
 
     script:
     """
