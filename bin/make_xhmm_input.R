@@ -23,12 +23,30 @@ unique_clusters <- sort(clusters[,unique(cluster)])
 
 for (c in unique_clusters) {
   samples <- clusters[cluster==c,sample_id]
-  tmp <- as.data.table(t(as.matrix(coverage[, ..samples])))
-  names(tmp) <- coverage$id
-  tmp$mean_cvg <- samples
-  setcolorder(tmp, c("mean_cvg", coverage$id))
-  outfile <- paste0("cluster_",c,"_xhmm.in.txt")
-  fwrite(tmp,file=outfile,sep="\t",col.names=T,row.names=F,quote=F)
-}
+  if(length(samples) > 250) {
+    n_chunks <- ceiling(length(samples) / 250)
+    chunks <- split(samples, rep_len(1:n_chunks, length(samples)))
+    for (i in 1:n_chunks){
+      sub_batch <- LETTERS[i]
+      tmp <- as.data.table(t(as.matrix(coverage[, ..chunks[[i]]])))
+      names(tmp) <- coverage$id
+      tmp$mean_cvg <- chunks[[i]]
+      setcolorder(tmp, c("mean_cvg", chunks[[i]]))
+      outfile <- paste0("cluster_",c,sub_batch,"_xhmm.in.txt")
+      fwrite(tmp,file=outfile,sep="\t",col.names=T,row.names=F,quote=F)
+      outfile <- paste0("batch_",c,sub_batch,"_XHMM.samples.txt",sep="_")
+      write.table(x=chunks[[i]],file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
+    }
+  } else {
+    tmp <- as.data.table(t(as.matrix(coverage[, ..samples])))
+    names(tmp) <- coverage$id
+    tmp$mean_cvg <- samples
+    setcolorder(tmp, c("mean_cvg", coverage$id))
+    outfile <- paste0("cluster_",c,"_xhmm.in.txt")
+    fwrite(tmp,file=outfile,sep="\t",col.names=T,row.names=F,quote=F)
+    outfile <- paste0("batch_",c,"_XHMM.samples.txt",sep="_")
+    write.table(x=samples,file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
+  }
 
+}
 write.table(filtered_ids,file="xhmm-filteredout.targets.txt",sep="\n",col.names=F,row.names=F,quote=F)
