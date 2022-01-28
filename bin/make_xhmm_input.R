@@ -35,7 +35,7 @@ for (c in unique_clusters) {
       setcolorder(tmp, c("mean_cvg", coverage$id))
       outfile <- paste0("cluster_",c,sub_batch,"_xhmm.in.txt")
       fwrite(tmp,file=outfile,sep="\t",col.names=T,row.names=F,quote=F)
-      outfile <- paste0("batch_",c,sub_batch,"_XHMM.samples.txt",sep="_")
+      outfile <- paste0("batch_",c,sub_batch,"_XHMM.samples.txt")
       write.table(x=tmp_samples,file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
     }
   } else {
@@ -45,7 +45,7 @@ for (c in unique_clusters) {
     setcolorder(tmp, c("mean_cvg", coverage$id))
     outfile <- paste0("cluster_",c,"_xhmm.in.txt")
     fwrite(tmp,file=outfile,sep="\t",col.names=T,row.names=F,quote=F)
-    outfile <- paste0("batch_",c,"_XHMM.samples.txt",sep="_")
+    outfile <- paste0("batch_",c,"_XHMM.samples.txt")
     write.table(x=samples,file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
   }
 
