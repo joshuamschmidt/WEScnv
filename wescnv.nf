@@ -248,7 +248,7 @@ process runExomeDepth{
     """
 }
 
-/*
+
 process runExomeDepthXchr{
     publishDir "$params.outdir/ExomeDepth_calls_Xchr/", pattern: "*calls.bed"
     publishDir "$params.outdir/ExomeDepth_refsets_Xchr/", pattern: "*.reference.txt"
@@ -267,7 +267,7 @@ process runExomeDepthXchr{
     ExomeDepthX.R $counts_file $reference_set $bio_sex
     """
 }
-*/
+
 
 /*
 Channel
