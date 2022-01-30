@@ -60,24 +60,30 @@ all.exons <- CallCNVs(x = all.exons,
                       name = counts$TARGET)
 
 
-
-exons.hg38.GRanges <- GenomicRanges::GRanges(seqnames = gsub(as.character(counts$chromosome),
+if(.hasSlot(all.exons, "CNV.calls") & dim(all.exons@CNV.calls)[1]>=1) {
+  exons.hg38.GRanges <- GenomicRanges::GRanges(seqnames = gsub(as.character(counts$chromosome),
                                                              pattern = 'chr',
                                                              replacement = '') ,
                                              IRanges::IRanges(start=counts$start,end=counts$end),
                                              names = counts$TARGET)
-all.exons <- AnnotateExtra(x = all.exons,
+  all.exons <- AnnotateExtra(x = all.exons,
                            reference.annotation = exons.hg38.GRanges,
                            min.overlap = 0.00001,
                            column.name = 'exons.hg38')
-calls <- data.table(all.exons@CNV.calls[ order ( all.exons@CNV.calls$BF, decreasing = TRUE),])[order(-BF)]
-calls <- calls[BF >0]
-reorder <- names(calls)[c(7,5:6,3,8:13,1,2,4)]
-setcolorder(calls, reorder)
-calls[,start:=start-1]
-calls[,chromosome:=paste0("chr",chromosome)]
-setorder(calls, chromosome, start, end)
-outfile <- paste(test_sample,"ExomeDepth-CNV.calls.bed",sep="_")
-fwrite(calls,outfile,sep="\t",col.names = F, row.names = F, quote = F)
+  calls <- data.table(all.exons@CNV.calls[ order ( all.exons@CNV.calls$BF, decreasing = TRUE),])[order(-BF)]
+  calls <- calls[BF >0]
+  reorder <- names(calls)[c(7,5:6,3,8:13,1,2,4)]
+  setcolorder(calls, reorder)
+  calls[,start:=start-1]
+  calls[,chromosome:=paste0("chr",chromosome)]
+  setorder(calls, chromosome, start, end)
+  outfile <- paste(test_sample,"ExomeDepth-CNV.calls.bed",sep="_")
+  fwrite(calls,outfile,sep="\t",col.names = F, row.names = F, quote = F)
+} else {
+  no_calls<- data.table(calls="No_cnv_calls_made")
+  outfile <- paste(test_sample,"ExomeDepth-CNV.calls.bed",sep="_")
+  fwrite(no_calls,outfile,sep="\t",col.names = F, row.names = F, quote = F)
+}
 outfile <- paste(test_sample,"ExomeDepth-CNV.reference.txt",sep="_")
 write.table(x=c(test_sex,best_ref_set),file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
+
