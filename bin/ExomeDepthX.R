@@ -25,7 +25,14 @@ if(test_sex!="FEMALE:XX" & test_sex!="MALE:XY") {
   quit(save = "no", status = 0, runLast = FALSE)
 }
 candidate_ref_set <- bio_sex[bioSex==test_sex][Sample_ID %in% candidate_ref_set,Sample_ID]
-
+if(length(candidate_ref_set)<1){
+  no_run <- data.table(calls="No_ref_set")
+  outfile <- paste(test_sample,"ExomeDepth-CNV.calls.bed",sep="_")
+  fwrite(no_run,outfile,sep="\t",col.names = F, row.names = F, quote = F)
+  outfile <- paste(test_sample,"ExomeDepth-CNV.reference.txt",sep="_")
+  write.table(x=no_run$calls,file=outfile,sep="\n",col.names = F, row.names = F, quote = F)
+  quit(save = "no", status = 0, runLast = FALSE)
+}
 test.exome <- counts[,get(test_sample)]
 ref.exomes <- as.matrix(counts[, ..candidate_ref_set])
 my.choice <- select.reference.set(test.counts = test.exome,
