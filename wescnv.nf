@@ -92,7 +92,7 @@ process cnvKitTargetCoverage {
     """
     cp $reference_fasta .
     cp $reference_fasta_index .
-    cnvkit.py coverage $input_cram $cnvkit_target_bed -o "$sample_id".targetcoverage.cnn
+    cnvkit.py coverage $input_cram $cnvkit_target_bed --fasta $reference_fasta -q 25 -o "$sample_id".targetcoverage.cnn
     """
 }
 
@@ -110,7 +110,7 @@ process cnvKitAntiTargetCoverage {
     """
     cp $reference_fasta .
     cp $reference_fasta_index .
-    cnvkit.py coverage $input_cram $cnvkit_antitarget_bed  -o "$sample_id".antitargetcoverage.cnn
+    cnvkit.py coverage $input_cram $cnvkit_antitarget_bed --fasta $reference_fasta -q 25 -o "$sample_id".antitargetcoverage.cnn
     """
 }
 
