@@ -1,23 +1,25 @@
-FROM python:3.10
+FROM ubuntu:latest
 
 MAINTAINER Joshua Schmidt joshmschmidt1@gmail.com
 
-WORKDIR /usr/src/app
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN pip install --no-cache-dir cnvkit
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential r-base python-is-python3 python3-pip python3-setuptools python3-dev
 
-COPY . .
+WORKDIR /app
 
-WORKDIR /data
+COPY requirements.txt /app/requirements.txt
 
-CMD ["/bin/bash"]
+RUN pip3 install -r requirements.txt
 
-ENV MPLCONFIGDIR=/data
+COPY . /app
 
-FROM rocker/r-ver:4.1
-RUN apt-get update && apt-get upgrade -y && \
-  apt-get install -y libbz2-dev libcurl4-openssl-dev liblzma-dev  zlib1g-dev
+RUN Rscript -e "install.packages('BiocManager')"
 
-RUN install2.r -e BiocManager
 ENV BIOC /usr/local/lib/R/site-library/littler/examples
-RUN "$BIOC"/installBioc.r DNAcopy
+
+RUN Rscript -e "BiocManager::install('DNAcopy')"
+
+ENV MPLCONFIGDIR=/app
+
+COPY . /app
