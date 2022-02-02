@@ -1,6 +1,8 @@
 tools/hts_nim_tools/hts_nim_tools
 testing/
-exome_design/
+exome_design/Homo_sapiens_assembly38.fasta
+exome_design/clamms_special_regions.grch38.bed
+exome_design/20160622.allChr.mask.bed
 results/
 work/
 qc/
