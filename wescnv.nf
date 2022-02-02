@@ -18,9 +18,7 @@ reference_fasta=params.reference_fasta
 reference_fasta_index=params.reference_fasta_index
 target_bed=params.target_bed
 target_cov_txt=params.target_cov_txt
-target_picard_list=params.target_picard
 bait_bed=params.bait_bed
-bait_picard_list=params.bait_picard
 cnvkit_target_bed=params.cnvKitTarget
 cnvkit_antitarget_bed=params.cnvKitAntiTarget
 
