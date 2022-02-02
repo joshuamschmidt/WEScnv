@@ -1,0 +1,9 @@
+
+singularity build /share/ClusterShare/software/contrib/jossch/singularity_images/cnvkit:0.9.9   docker://joshmschmidt/cnvkit:0.9.9
+
+# splitting probes
+docker run -u $(id -u):$(id -g) -v $(pwd):/data --rm -ti joshmschmidt/cnvkit:0.9.9 /bin/bash -c 'cnvkit.py target Agilent_V5_probes.bed --annotate hg38-refFlat.txt --split -o hg38_cnvkit_targets.bed'
+
+docker run -u $(id -u):$(id -g) -v $(pwd):/data --rm -ti joshmschmidt/cnvkit:0.9.9 /bin/bash -c 'cnvkit.py access Homo_sapiens_assembly38.fasta -s 1000 -x 20160622.allChr.mask.bed -o access-excludes.hg38.bed'
+
+docker run -u $(id -u):$(id -g) -v $(pwd):/data --rm -ti joshmschmidt/cnvkit:0.9.9 /bin/bash -c 'cnvkit.py antitarget hg38_cnvkit_targets.bed -g access-excludes.hg38.bed -o hg38_cnvkit_antitargets.bed'

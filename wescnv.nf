@@ -11,6 +11,8 @@ params.target_cov_txt = 'targets.txt'
 params.target_picard = ''
 params.bait_bed = 'baits.bed'
 params.bait_picard = ''
+params.cnvKitTarget = ''
+params.cnvKitAntiTarget = ''
 batch=params.batch
 reference_fasta=params.reference_fasta
 reference_fasta_index=params.reference_fasta_index
@@ -19,7 +21,8 @@ target_cov_txt=params.target_cov_txt
 target_picard_list=params.target_picard
 bait_bed=params.bait_bed
 bait_picard_list=params.bait_picard
-
+cnvkit_target_bed=params.cnvKitTarget
+cnvkit_antitarget_bed=params.cnvKitAntiTarget
 
 Channel
     .fromPath(params.inputFile)
@@ -27,7 +30,7 @@ Channel
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
     .set { samples_ch }
 
-samples_ch.into { coverageInChannel; countsInChannel; hsMetricsInChannel; isMetricsInChannel}
+samples_ch.into { coverageInChannel; countsInChannel; hsMetricsInChannel; isMetricsInChannel, cnvKitTargetCoverageInChannel; cnvKitAntiTargetCoverageInChannel}
 
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
@@ -76,6 +79,39 @@ process cramCounts {
     | gzip > "$sample_id".cpt.bed.gz
     """
 }
+
+process cnvKitTargetCoverage {
+
+    label 'cnvKitTasks'
+
+    input:
+    tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitTargetCoverageInChannel
+
+    output:
+    tuple val(sample_id), path("*.targetcoverage.cnn") into cnvKitTargetCoverageOutChannel
+
+    script:
+    """
+    cnvkit.py coverage $input_cram $cnvkit_target_bed -o "$sample_id".targetcoverage.cnn
+    """
+}
+
+process cnvKitAntiTargetCoverage {
+
+    label 'cnvKitTasks'
+
+    input:
+    tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitAntiTargetCoverageInChannel
+
+    output:
+    tuple val(sample_id), path("*.antitargetcoverage.cnn") into cnvKitAntiTargetCoverageOutChannel
+
+    script:
+    """
+    cnvkit.py coverage $input_cram $cnvkit_antitarget_bed  -o "$sample_id".antitargetcoverage.cnn
+    """
+}
+
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
