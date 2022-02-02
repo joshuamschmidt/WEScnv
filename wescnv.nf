@@ -80,8 +80,6 @@ process cramCounts {
 
 process cnvKitTargetCoverage {
 
-    label 'cnvKitTasks'
-
     input:
     tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitTargetCoverageInChannel
 
@@ -90,15 +88,19 @@ process cnvKitTargetCoverage {
 
     script:
     """
-    cp $reference_fasta .
     cp $reference_fasta_index .
-    cnvkit.py coverage $input_cram $cnvkit_target_bed --fasta $reference_fasta -q 25 -o "$sample_id".targetcoverage.cnn
+    mosdepth --fasta $reference_fasta \
+    --by $cnvkit_target_bed \
+    --no-per-base \
+    --mapq 25 \
+    --threads $task.cpus \
+    $sample_id \
+    $input_cram
+    convert_to_cnvkit_coverage.sh "$sample_id".regions.bed.gz $sample_id 'target'
     """
 }
 
 process cnvKitAntiTargetCoverage {
-
-    label 'cnvKitTasks'
 
     input:
     tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitAntiTargetCoverageInChannel
@@ -108,9 +110,15 @@ process cnvKitAntiTargetCoverage {
 
     script:
     """
-    cp $reference_fasta .
     cp $reference_fasta_index .
-    cnvkit.py coverage $input_cram $cnvkit_antitarget_bed --fasta $reference_fasta -q 25 -o "$sample_id".antitargetcoverage.cnn
+    mosdepth --fasta $reference_fasta \
+    --by $cnvkit_antitarget_bed \
+    --no-per-base \
+    --mapq 25 \
+    --threads $task.cpus \
+    $sample_id \
+    $input_cram
+    convert_to_cnvkit_coverage.sh "$sample_id".regions.bed.gz $sample_id 'anti_target'
     """
 }
 
