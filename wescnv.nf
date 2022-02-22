@@ -121,7 +121,12 @@ process cnvKitAntiTargetCoverage {
     convert_to_cnvkit_coverage.sh "$sample_id".regions.bed.gz $sample_id 'anti_target'
     """
 }
+// define all cnvkit channels....
 
+cnvKitTargetCoverageOutChannel.into { cnvKitTargetRefCh ; cnvKitTargetFixCh }
+cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
+
+cnvKitCombinedRefCh
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
@@ -273,7 +278,7 @@ process runXhmm {
 }
 
 
-defineTargetReferences_out_channel.into { exomeDepthReferences;  exomeDepthReferencesXchr }
+defineTargetReferences_out_channel.into { exomeDepthReferences;  exomeDepthReferencesXchr; cnvkitReferences }
 
 
 process runExomeDepth{
@@ -314,6 +319,11 @@ process runExomeDepthXchr{
     """
 }
 
+process makeCnvkitReferences {
+
+    input:
+    path clusters_file from defineProcessGroups_out_channel
+}
 
 /*
 Channel
