@@ -126,7 +126,9 @@ process cnvKitAntiTargetCoverage {
 cnvKitTargetCoverageOutChannel.into { cnvKitTargetRefCh ; cnvKitTargetFixCh }
 cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
 
-cnvKitCombinedRefCh
+cnvKitTargetRefCh
+    .combine(cnvKitAntiTargetRefCh)
+    .into { cnvKitCombinedTargetCh }
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
