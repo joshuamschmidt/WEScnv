@@ -340,15 +340,14 @@ cnvKitTargetSampleCh
 
 cnvKitCombinedSampleCh
     .join(cnvKitSampleRefCh)
-    .first()
-    .view()
+    .set{ makeCnvRefPanelsInCh }
 
 
 /*
 process makeCnvRefPanels {
 
     input:
-    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from cnvKitCombinedSampleRefPanelCh
+    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from makeCnvRefPanelsInCh
     file input_target_files from cnvKitTargetRefCh.collect()
     file input_antitarget_files from cnvKitAntiTargetRefCh.collect()
 
