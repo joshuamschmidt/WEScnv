@@ -121,14 +121,6 @@ process cnvKitAntiTargetCoverage {
     convert_to_cnvkit_coverage.sh "$sample_id".regions.bed.gz $sample_id 'anti_target'
     """
 }
-// define all cnvkit channels....
-
-cnvKitTargetCoverageOutChannel.into { cnvKitTargetRefCh ; cnvKitTargetFixCh }
-cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
-
-cnvKitTargetRefCh
-    .combine(cnvKitAntiTargetRefCh)
-    .into { cnvKitCombinedTargetCh }
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
@@ -321,11 +313,53 @@ process runExomeDepthXchr{
     """
 }
 
-process makeCnvkitReferences {
+
+// define all downstream cnvkit channels and processes
+
+cnvKitTargetCoverageOutChannel.into { cnvKitTargetSampleCh, cnvKitTargetRefCh ; cnvKitTargetFixCh }
+cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetSampleCh, cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
+
+process makeCnvKitSampleRefpairs {
 
     input:
-    path clusters_file from defineProcessGroups_out_channel
+    file reference_set from cnvkitReferences.flatten()
+
+    output:
+    tuple stdout(sample_id), path(sample_refs) into cnvKitSampleRefCh
+
+    script:
+    """
+    cat $reference_set | head -n1 | cut -f1
+    sed '1d' $reference_set > sample_refs
+    """
 }
+
+cnvKitSampleRefCh
+    .first()
+    .view()
+
+/*
+cnvKitTargetSampleCh
+    .combine(cnvKitAntiTargetSampleCh)
+    .combine(cnvKitSampleRefCh)
+    .into { cnvKitCombinedSampleCh }
+
+
+process makeCnvRefPanels {
+
+    input:
+    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from cnvKitCombinedSampleCh
+    file input_target_files from cnvKitTargetRefCh.collect()
+    file input_antitarget_files from cnvKitAntiTargetRefCh.collect()
+
+    output:
+}
+*/
+
+
+
+
+
 
 /*
 Channel
