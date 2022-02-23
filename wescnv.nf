@@ -329,7 +329,7 @@ process makeCnvKitSampleRefpairs {
 
     script:
     """
-    cat $reference_set | head -n1 | cut -f1
+    cat $reference_set | head -n2 | tail -n1 | cut -f1
     sed '1d' $reference_set > sample_refs
     """
 }
