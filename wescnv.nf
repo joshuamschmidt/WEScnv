@@ -334,18 +334,18 @@ process makeCnvKitSampleRefpairs {
     """
 }
 
-cnvKitSampleRefCh
-    .first()
-    .view()
-
-/*
 blah
 cnvKitTargetSampleCh
     .combine(cnvKitAntiTargetSampleCh)
     .combine(cnvKitSampleRefCh)
     .into { cnvKitCombinedSampleCh }
 
+cnvKitCombinedSampleCh
+    .first()
+    .view()
 
+
+/*
 process makeCnvRefPanels {
 
     input:
