@@ -325,7 +325,7 @@ process makeCnvKitSampleRefpairs {
     file reference_set from cnvkitReferences.flatten()
 
     output:
-    tuple stdout(sample_id), path(sample_refs) into cnvKitSampleRefCh
+    tuple stdout sample_id, path(sample_refs) into cnvKitSampleRefCh
 
     script:
     """
