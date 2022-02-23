@@ -335,11 +335,11 @@ process makeCnvKitSampleRefpairs {
 }
 
 cnvKitTargetSampleCh
-    .combine(cnvKitAntiTargetSampleCh)
+    .join(cnvKitAntiTargetSampleCh)
     .set{ cnvKitCombinedSampleCh }
 
 cnvKitCombinedSampleCh
-    .combine(cnvKitSampleRefCh)
+    .join(cnvKitSampleRefCh)
     .first()
     .view()
 
