@@ -334,7 +334,6 @@ process makeCnvKitSampleRefpairs {
     """
 }
 
-blah
 cnvKitTargetSampleCh
     .combine(cnvKitAntiTargetSampleCh)
     .combine(cnvKitSampleRefCh)
