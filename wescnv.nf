@@ -327,19 +327,19 @@ process makeCnvKitSampleRefpairs {
     output:
     tuple stdout, path(sample_refs) into cnvKitSampleRefCh
 
-    script:
-    """
-    cat $reference_set | head -n2 | tail -n1 | cut -f1
-    sed '1d' $reference_set > sample_refs
-    """
+    shell:
+    '''
+    awk 'NR==2 { printf("%s", $1); exit }' !{reference_set}
+    awk 'NR!=2 { print $0 }' !{reference_set} > sample_refs
+    '''
 }
 
 cnvKitTargetSampleCh
     .combine(cnvKitAntiTargetSampleCh)
-    .combine(cnvKitSampleRefCh)
-    .into { cnvKitCombinedSampleCh }
+    .set{ cnvKitCombinedSampleCh }
 
 cnvKitCombinedSampleCh
+    .combine(cnvKitSampleRefCh)
     .first()
     .view()
 
@@ -348,7 +348,7 @@ cnvKitCombinedSampleCh
 process makeCnvRefPanels {
 
     input:
-    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from cnvKitCombinedSampleCh
+    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from cnvKitCombinedSampleRefPanelCh
     file input_target_files from cnvKitTargetRefCh.collect()
     file input_antitarget_files from cnvKitAntiTargetRefCh.collect()
 
