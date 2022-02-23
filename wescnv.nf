@@ -316,8 +316,8 @@ process runExomeDepthXchr{
 
 // define all downstream cnvkit channels and processes
 
-cnvKitTargetCoverageOutChannel.into { cnvKitTargetSampleCh, cnvKitTargetRefCh ; cnvKitTargetFixCh }
-cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetSampleCh, cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
+cnvKitTargetCoverageOutChannel.into { cnvKitTargetSampleCh; cnvKitTargetRefCh ; cnvKitTargetFixCh }
+cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetSampleCh; cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
 
 process makeCnvKitSampleRefpairs {
 
