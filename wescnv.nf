@@ -342,23 +342,40 @@ cnvKitCombinedSampleCh
     .join(cnvKitSampleRefCh)
     .set{ makeCnvRefPanelsInCh }
 
-
-/*
 process makeCnvRefPanels {
 
     input:
     tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from makeCnvRefPanelsInCh
     file input_target_files from cnvKitTargetRefCh.collect()
-    file input_antitarget_files from cnvKitAntiTargetRefCh.collect()
+    file input_anti_target_files from cnvKitAntiTargetRefCh.collect()
 
     output:
+    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path("*100.cnr") into cnvKitPanelRefCh
+
+    script:
+    """
+    cp $reference_fasta_index .
+    makeCnvKitReference.py --sample_id $sample_id \
+    --matched_ref $sample_refs \
+    --refFasta $reference_fasta \
+    --target_files $input_target_files \
+    --anti_target_files $input_anti_target_files
+    """
 }
-*/
 
+process cnvKitFixSample {
 
+    input:
+    tuple val(sample_id), path(target_coverage), path(antitarget_coverage), path(reference)
 
+    output:
+    tuple val(sample_id), path("*.cnr")
 
-
+    script:
+    """
+    cnvkit.py fix $target_coverage $antitarget_coverage $reference -o "$sample_id".cnr
+    """
+}
 
 /*
 Channel
