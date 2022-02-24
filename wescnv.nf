@@ -366,10 +366,10 @@ process makeCnvRefPanels {
 process cnvKitFixSample {
 
     input:
-    tuple val(sample_id), path(target_coverage), path(antitarget_coverage), path(reference)
+    tuple val(sample_id), path(target_coverage), path(antitarget_coverage), path(reference) from cnvKitPanelRefCh
 
     output:
-    tuple val(sample_id), path("*.cnr")
+    tuple val(sample_id), path("*.cnr") into cnvKitSegmentCh
 
     script:
     """
