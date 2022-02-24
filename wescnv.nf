@@ -342,6 +342,14 @@ cnvKitCombinedSampleCh
     .join(cnvKitSampleRefCh)
     .set{ makeCnvRefPanelsInCh }
 
+
+
+cnvKitTargetRefCh
+    .collect()
+    .count()
+    .view()
+
+/*
 process makeCnvRefPanels {
 
     input:
@@ -376,7 +384,7 @@ process cnvKitFixSample {
     cnvkit.py fix $target_coverage $antitarget_coverage $reference -o "$sample_id".cnr
     """
 }
-
+*/
 /*
 Channel
       .fromPath("$projectDir/assets/clamms_special_regions.grch38.bed")
