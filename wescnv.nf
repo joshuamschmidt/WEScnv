@@ -344,13 +344,10 @@ cnvKitCombinedSampleCh
 
 
 
-cnvKitTargetRefCh
-    .count()
+makeCnvRefPanelsInCh
+    .first()
     .view()
 
-cnvKitAntiTargetRefCh
-    .count()
-    .view()
 
 /*
 process makeCnvRefPanels {
