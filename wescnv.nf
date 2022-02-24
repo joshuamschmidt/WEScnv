@@ -338,27 +338,28 @@ cnvKitTargetSampleCh
     .join(cnvKitAntiTargetSampleCh)
     .set{ cnvKitCombinedSampleCh }
 
+/*
 cnvKitCombinedSampleCh
     .join(cnvKitSampleRefCh)
     .set{ makeCnvRefPanelsInCh }
-
-
 
 makeCnvRefPanelsInCh
     .first()
     .view()
 
+*/
+cnvKitSampleRefCh
+    .set{ cnvKitSampleRef_PanelCh }
 
-/*
 process makeCnvRefPanels {
 
     input:
-    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path(sample_refs) from makeCnvRefPanelsInCh
+    tuple val(sample_id), path(sample_refs) from cnvKitSampleRef_PanelCh
     file input_target_files from cnvKitTargetRefCh.collect()
     file input_anti_target_files from cnvKitAntiTargetRefCh.collect()
 
     output:
-    tuple val(sample_id), path(sample_target_coverage), path(sample_antitarget_coverage), path("*100.cnr") into cnvKitPanelRefCh
+    tuple val(sample_id), path("*100.cnr") into cnvKitPanelRefCh
 
     script:
     """
@@ -371,6 +372,7 @@ process makeCnvRefPanels {
     """
 }
 
+/*
 process cnvKitFixSample {
 
     input:
