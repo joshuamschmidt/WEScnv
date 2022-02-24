@@ -345,7 +345,10 @@ cnvKitCombinedSampleCh
 
 
 cnvKitTargetRefCh
-    .collect()
+    .count()
+    .view()
+
+cnvKitAntiTargetRefCh
     .count()
     .view()
 
