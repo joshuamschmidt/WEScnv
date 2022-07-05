@@ -205,6 +205,7 @@ process assignBioSex {
     """
 }
 
+/*
 process defineProcessGroups {
     publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg"
     publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt"
@@ -337,6 +338,8 @@ cnvKitTargetSampleCh
     .join(cnvKitAntiTargetSampleCh)
     .set{ cnvKitCombinedSampleCh }
 
+*/
+
 /*
 cnvKitCombinedSampleCh
     .join(cnvKitSampleRefCh)
@@ -347,6 +350,8 @@ makeCnvRefPanelsInCh
     .view()
 
 */
+
+/*
 cnvKitSampleRefCh
     .set{ cnvKitSampleRef_PanelCh }
 
@@ -371,7 +376,7 @@ process makeCnvRefPanels {
     """
 }
 
-
+*/
 /*
 process cnvKitFixSample {
 
