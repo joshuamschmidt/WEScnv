@@ -32,6 +32,7 @@ samples_ch.into { coverageInChannel; countsInChannel; cnvKitTargetCoverageInChan
 
 process cramCoverage {
     publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
+    publishDir "$params.outdir/Coverage", pattern: "*.regions.bed.gz"
 
     label 'bamTasks'
 
@@ -39,7 +40,7 @@ process cramCoverage {
     tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from coverageInChannel
 
     output:
-    path "*regions.bed.gz" into coverageOutChannel
+    path "${sample_id}.regions.bed.gz" into coverageOutChannel
     path "${sample_id}.mosdepth.summary.txt" into coverageSummaryChannel
 
     script:
