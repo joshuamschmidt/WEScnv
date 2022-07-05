@@ -121,7 +121,7 @@ process cnvKitAntiTargetCoverage {
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
 process aggregateCoverage {
-    publishDir "$params.outdir/CombinedCov/", pattern: "*coverage*"
+    publishDir "$params.outdir/CombinedCov/", pattern: "*coverage*", mode: 'copy'
 
     label 'combineTasks'
 
@@ -142,7 +142,7 @@ process aggregateCoverage {
 }
 
 process aggregateCounts {
-    publishDir "$params.outdir/CombinedCov/", pattern: "*counts*"
+    publishDir "$params.outdir/CombinedCov/", pattern: "*counts*", mode: 'copy'
 
     label 'combineTasks'
 
@@ -163,7 +163,7 @@ process aggregateCounts {
 }
 
 process aggregateFpkm {
-    publishDir "$params.outdir/CombinedCov", pattern: "*fkpm*"
+    publishDir "$params.outdir/CombinedCov", pattern: "*fkpm*", mode: 'copy'
 
     label 'combineTasks'
 
@@ -185,7 +185,7 @@ process aggregateFpkm {
 }
 
 process assignBioSex {
-    publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt"
+    publishDir "$params.outdir/AssignedSex/", pattern: "*Assignment.txt", mode: 'copy'
 
     label 'combineTasks'
 
