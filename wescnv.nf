@@ -4,8 +4,6 @@
 params.outdir = 'run/'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
-params.reference_fasta = 'ref.fasta'
-params.reference_fasta_index = 'ref.fai'
 params.target_bed = 'targets.bed'
 params.target_cov_txt = 'targets.txt'
 params.target_picard = ''
@@ -29,8 +27,8 @@ Channel
 samples_ch.into { coverageInChannel; countsInChannel; cnvKitTargetCoverageInChannel; cnvKitAntiTargetCoverageInChannel }
 
 process cramCoverage {
-    publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt"
-    publishDir "$params.outdir/Coverage", pattern: "*.regions.bed.gz"
+    publishDir "$params.outdir/CoverageSummary", pattern: "*.summary.txt", mode: 'copy'
+    publishDir "$params.outdir/Coverage", pattern: "*.regions.bed.gz", mode: 'copy'
 
     label 'bamTasks'
 
@@ -54,7 +52,7 @@ process cramCoverage {
 }
 
 process cramCounts {
-    publishDir "$params.outdir/Counts", pattern: "*.cpt.bed.gz"
+    publishDir "$params.outdir/Counts", pattern: "*.cpt.bed.gz", mode: 'copy'
 
     label 'bamTasks'
 
@@ -77,6 +75,7 @@ process cramCounts {
 }
 
 process cnvKitTargetCoverage {
+    publishDir "$params.outdir/cnvKitTargetCoverage", pattern: "*.targetcoverage.cnn", mode: 'copy'
 
     input:
     tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from cnvKitTargetCoverageInChannel
@@ -98,6 +97,7 @@ process cnvKitTargetCoverage {
 }
 
 process cnvKitAntiTargetCoverage {
+    publishDir "$params.outdir/cnvKitAntiTargetCoverage", pattern: "*.antitargetcoverage.cnn", mode: 'copy'
 
     input:
     tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitAntiTargetCoverageInChannel
