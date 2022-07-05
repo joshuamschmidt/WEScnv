@@ -56,6 +56,7 @@ process cramCoverage {
 }
 
 process cramCounts {
+    publishDir "$params.outdir/Counts", pattern: "*.cpt.bed.gz"
 
     label 'bamTasks'
 
@@ -63,7 +64,7 @@ process cramCounts {
     tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from countsInChannel
 
     output:
-    path "*.cpt.bed.gz" into countsOutChannel
+    path "${sample_id}.cpt.bed.gz" into countsOutChannel
 
     script:
     """
