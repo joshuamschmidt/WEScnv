@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // default params
-params.outputDir = 'run/'
+params.outdir = 'run/'
 params.inputFile = 'inputFile.txt'
 params.batch = 'batch01'
 params.reference_fasta = 'ref.fasta'
