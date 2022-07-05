@@ -36,7 +36,7 @@ process cramCoverage {
     label 'bamTasks'
 
     input:
-    tuple val(sample_id), path(input_cram), path(input_crai) from coverageInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from coverageInChannel
 
     output:
     path "*regions.bed.gz" into coverageOutChannel
@@ -44,8 +44,7 @@ process cramCoverage {
 
     script:
     """
-    cp $reference_fasta_index .
-    mosdepth --fasta $reference_fasta \
+    mosdepth --fasta $input_reference \
     --by $target_bed \
     --no-per-base \
     --mapq 25 \
