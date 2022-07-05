@@ -59,16 +59,15 @@ process cramCounts {
     label 'bamTasks'
 
     input:
-    tuple val(sample_id), path(input_cram), path(input_crai) from countsInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from countsInChannel
 
     output:
     path "*.cpt.bed.gz" into countsOutChannel
 
     script:
     """
-    cp $reference_fasta_index .
     hts_nim_tools count-reads \
-    --fasta $reference_fasta \
+    --fasta $input_reference \
     --mapq 25 \
     --threads $task.cpus \
     $target_bed $input_cram \
