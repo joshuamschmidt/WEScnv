@@ -121,12 +121,6 @@ process cnvKitAntiTargetCoverage {
     convert_to_cnvkit_coverage.sh "$sample_id".regions.bed.gz $sample_id 'anti_target'
     """
 }
-// define all cnvkit channels....
-
-cnvKitTargetCoverageOutChannel.into { cnvKitTargetRefCh ; cnvKitTargetFixCh }
-cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
-
-cnvKitCombinedRefCh
 
 countsOutChannel.into { aggregateCounts_ch; aggregateFpkm_ch }
 
@@ -319,12 +313,81 @@ process runExomeDepthXchr{
     """
 }
 
-process makeCnvkitReferences {
+
+// define all downstream cnvkit channels and processes
+
+cnvKitTargetCoverageOutChannel.into { cnvKitTargetSampleCh; cnvKitTargetRefCh ; cnvKitTargetFixCh }
+cnvKitAntiTargetCoverageOutChannel.into { cnvKitAntiTargetSampleCh; cnvKitAntiTargetRefCh ; cnvKitAntiTargetFixCh }
+
+process makeCnvKitSampleRefpairs {
 
     input:
-    path clusters_file from defineProcessGroups_out_channel
+    file reference_set from cnvkitReferences.flatten()
+
+    output:
+    tuple stdout, path(sample_refs) into cnvKitSampleRefCh
+
+    shell:
+    '''
+    awk 'NR==2 { printf("%s", $1); exit }' !{reference_set}
+    awk 'NR!=2 { print $0 }' !{reference_set} > sample_refs
+    '''
 }
 
+cnvKitTargetSampleCh
+    .join(cnvKitAntiTargetSampleCh)
+    .set{ cnvKitCombinedSampleCh }
+
+/*
+cnvKitCombinedSampleCh
+    .join(cnvKitSampleRefCh)
+    .set{ makeCnvRefPanelsInCh }
+
+makeCnvRefPanelsInCh
+    .first()
+    .view()
+
+*/
+cnvKitSampleRefCh
+    .set{ cnvKitSampleRef_PanelCh }
+
+process makeCnvRefPanels {
+
+    input:
+    tuple val(sample_id), path(sample_refs) from cnvKitSampleRef_PanelCh
+    file input_target_files from cnvKitTargetRefCh.collect()
+    file input_anti_target_files from cnvKitAntiTargetRefCh.collect()
+
+    output:
+    tuple val(sample_id), path("*100.cnr") into cnvKitPanelRefCh
+
+    script:
+    """
+    cp $reference_fasta_index .
+    makeCnvKitReference.py --sample_id $sample_id \
+    --matched_ref $sample_refs \
+    --refFasta $reference_fasta \
+    --target_files $input_target_files \
+    --anti_target_files $input_anti_target_files
+    """
+}
+
+
+/*
+process cnvKitFixSample {
+
+    input:
+    tuple val(sample_id), path(target_coverage), path(antitarget_coverage), path(reference) from cnvKitPanelRefCh
+
+    output:
+    tuple val(sample_id), path("*.cnr") into cnvKitSegmentCh
+
+    script:
+    """
+    cnvkit.py fix $target_coverage $antitarget_coverage $reference -o "$sample_id".cnr
+    """
+}
+*/
 /*
 Channel
       .fromPath("$projectDir/assets/clamms_special_regions.grch38.bed")
