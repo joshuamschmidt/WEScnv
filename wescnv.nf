@@ -79,15 +79,14 @@ process cramCounts {
 process cnvKitTargetCoverage {
 
     input:
-    tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitTargetCoverageInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from cnvKitTargetCoverageInChannel
 
     output:
     tuple val(sample_id), path("*.targetcoverage.cnn") into cnvKitTargetCoverageOutChannel
 
     script:
     """
-    cp $reference_fasta_index .
-    mosdepth --fasta $reference_fasta \
+    mosdepth --fasta $input_reference \
     --by $cnvkit_target_bed \
     --no-per-base \
     --mapq 25 \
