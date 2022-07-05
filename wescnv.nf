@@ -100,15 +100,14 @@ process cnvKitAntiTargetCoverage {
     publishDir "$params.outdir/cnvKitAntiTargetCoverage", pattern: "*.antitargetcoverage.cnn", mode: 'copy'
 
     input:
-    tuple val(sample_id), path(input_cram), path(input_crai) from cnvKitAntiTargetCoverageInChannel
+    tuple val(sample_id), path(input_cram), path(input_crai), path(input_reference), path(input_idx) from cnvKitAntiTargetCoverageInChannel
 
     output:
     tuple val(sample_id), path("*.antitargetcoverage.cnn") into cnvKitAntiTargetCoverageOutChannel
 
     script:
     """
-    cp $reference_fasta_index .
-    mosdepth --fasta $reference_fasta \
+    mosdepth --fasta $input_reference \
     --by $cnvkit_antitarget_bed \
     --no-per-base \
     --mapq 25 \
