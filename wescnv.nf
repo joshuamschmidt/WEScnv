@@ -25,7 +25,7 @@ cnvkit_antitarget_bed=params.cnvKitAntiTarget
 Channel
     .fromPath(params.inputFile)
     .splitCsv(header:true, sep:'\t')
-    .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai)) }
+    .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai), file(row.reference_fasta), file(row.reference_idx)) }
     .set { samples_ch }
 
 samples_ch.into { coverageInChannel; countsInChannel; cnvKitTargetCoverageInChannel; cnvKitAntiTargetCoverageInChannel }
