@@ -6,6 +6,7 @@ exome_design/20160622.allChr.mask.bed
 results/
 work/
 qc/
+results-initial.tar.gz
 inputFiles.txt
 .nextflow/
 .nextflow*
