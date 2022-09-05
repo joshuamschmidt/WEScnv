@@ -67,3 +67,8 @@ awk 'BEGIN {OFS="\t";} {merged=0;} {if($4~/,/) merged=1;} {print $0, merged} ' "
 
 awk 'BEGIN {OFS="\t"; print "CHR", "START", "END", "TARGET", "MAP100", "GC", "GC500", "WIDTH", "MERGED";} {print $0}' "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD-M.bed > "$TARGETS"/Agilent_V5_targets-MAP100-GC-GC500-WD-M.txt
 `
+
+
+
+# NEWER MANE SELECT
+bgzip -dc MANE.GRCh38.v1.0.refseq_genomic.gff.gz | awk -F'[\t;=]' 'BEGIN {OFS="\t";} {chr=$1;ann=$3;start_pos=$4-1;end_pos=$5;name=$18;} {if(ann=="exon") {print chr, start_pos, end_pos, name;}}' | sort -k1,1 -k2,2n | bedtools merge -c 4 -o distinct -d -50 > MANE.GRCh38.v1.0.exons.merged.bed

@@ -2,8 +2,8 @@
 
 // default params
 params.outdir = 'run/'
-params.inputFile = 'inputFile.txt'
-params.batch = 'batch01'
+params.samples = 'inputFile.txt'
+params.runID = 'batch01'
 params.target_bed = 'targets.bed'
 params.target_cov_txt = 'targets.txt'
 params.target_picard = ''
@@ -11,7 +11,8 @@ params.bait_bed = 'baits.bed'
 params.bait_picard = ''
 params.cnvKitTarget = ''
 params.cnvKitAntiTarget = ''
-batch=params.batch
+
+runID=params.runID
 target_bed=params.target_bed
 target_cov_txt=params.target_cov_txt
 bait_bed=params.bait_bed
@@ -19,7 +20,7 @@ cnvkit_target_bed=params.cnvKitTarget
 cnvkit_antitarget_bed=params.cnvKitAntiTarget
 
 Channel
-    .fromPath(params.inputFile)
+    .fromPath(params.samples)
     .splitCsv(header:true, sep:'\t')
     .map{ row-> tuple(row.sample_id, file(row.input_cram), file(row.input_crai), file(row.reference_fasta), file(row.reference_idx)) }
     .set { samples_ch }
@@ -129,7 +130,7 @@ process aggregateCoverage {
     file input_files from coverageOutChannel.collect()
 
     output:
-    file "${batch}.coverage.bed.gz" into coverage_out_channel
+    file "${runID}.coverage.bed.gz" into coverage_out_channel
 
     script:
     """
@@ -137,7 +138,7 @@ process aggregateCoverage {
     --suffix ".regions.bed.gz" \
     --bed $target_cov_txt \
     --merge-bed \
-    | gzip > "$batch".coverage.bed.gz
+    | gzip > "$runID".coverage.bed.gz
     """
 }
 
@@ -150,7 +151,7 @@ process aggregateCounts {
     file input_files from aggregateCounts_ch.collect()
 
     output:
-    file "${batch}.counts.bed.gz" into counts_out_channel
+    file "${runID}.counts.bed.gz" into counts_out_channel
 
     script:
     """
@@ -158,7 +159,7 @@ process aggregateCounts {
     --suffix .cpt.bed.gz \
     --bed $target_cov_txt \
     --merge-bed \
-    | gzip > "$batch".counts.bed.gz
+    | gzip > "$runID".counts.bed.gz
     """
 }
 
@@ -171,7 +172,7 @@ process aggregateFpkm {
     file input_files from aggregateFpkm_ch.collect()
 
     output:
-    file "${batch}.fkpm.bed.gz" into fkpm_out_channel
+    file "${runID}.fkpm.bed.gz" into fkpm_out_channel
 
     script:
     """
@@ -180,7 +181,7 @@ process aggregateFpkm {
     --bed $target_cov_txt \
     --fpkm \
     --merge-bed \
-    | gzip > "$batch".fkpm.bed.gz
+    | gzip > "$runID".fkpm.bed.gz
     """
 }
 
@@ -193,12 +194,12 @@ process assignBioSex {
     file input_files from coverageSummaryChannel.collect()
 
     output:
-    file "${batch}_bioSex-Assignment.txt" into assignedSexChannel
+    file "${runID}_bioSex-Assignment.txt" into assignedSexChannel
 
     script:
     """
     assign_bio_sex.py $input_files \
-    --suffix ".mosdepth.summary.txt" > "$batch"_bioSex-Assignment.txt
+    --suffix ".mosdepth.summary.txt" > "$runID"_bioSex-Assignment.txt
     """
 }
 

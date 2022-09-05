@@ -14,7 +14,7 @@ xhmm --matrix -r ./"$coverageFile" --centerData --centerType target \
 --outputExcludedSamples ./"$prefix".filtered_centered.txt.filtered_samples.txt \
 --minTargetSize 10 --maxTargetSize 10000 \
 --minMeanTargetRD 10 --maxMeanTargetRD 1000 \
---minMeanSampleRD 10 --maxMeanSampleRD 200 \
+--minMeanSampleRD 10 --maxMeanSampleRD 300 \
 --maxSdSampleRD 150
 
 xhmm --PCA -r ./"$prefix".filtered_centered.txt --PCAfiles ./"$prefix".PCA
