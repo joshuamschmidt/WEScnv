@@ -203,10 +203,10 @@ process assignBioSex {
     """
 }
 
-/*
+
 process defineProcessGroups {
-    publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg"
-    publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt"
+    publishDir "$params.outdir/ProcessGroups/", pattern: "*.svg", mode: 'copy'
+    publishDir "$params.outdir/ProcessGroups/", pattern: "*stats.txt", mode: 'copy'
 
     input:
     file fkpm_file from fkpm_out_channel
@@ -223,6 +223,7 @@ process defineProcessGroups {
 
 }
 
+/*
 process prepareXhmmInput {
     publishDir "$params.outdir/XHMM_metrics/", pattern: "*XHMM.samples.txt"
     input:
