@@ -1,5 +1,12 @@
 # README
 
+
+### This is the dsl2 development branch
+
+I am currently updating this workflow to dsl2. It should provide addutional benefits
+with using ref panels in CNV calling apps.
+
+
 This is a workflow for calling CNV in WES data, and is currently under active development.
 
 It utilises Docker and WDL/Cromwell, with backend support for SGE and GoogleCloud.
