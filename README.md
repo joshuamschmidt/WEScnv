@@ -2,7 +2,7 @@
 
 This is a workflow for calling CNV in WES data, and is currently under active development.
 
-It utilises Docker and WDL/Cromwell, with backend support for SGE and GoogleCloud.
+It utilises Docker/Singularity and Nextflow, with backend support for SGE and GoogleCloud.
 
 ## Docker
 
