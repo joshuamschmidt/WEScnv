@@ -24,6 +24,16 @@ nextflow.enable.dsl=2
 // default params
 params.outdir = 'results/'
 params.input = 'sample_sheet.txt'
+params.target_bed = 'targets.bed'
+
+
+/*
+params.target_picard = ''
+params.bait_bed = 'baits.bed'
+params.bait_picard = ''
+params.cnvKitTarget = ''
+params.cnvKitAntiTarget = ''
+*/
 
 
 log.info """\
@@ -31,6 +41,7 @@ log.info """\
  ===================================
  input        : ${params.input}
  outdir       : ${params.outdir}
+ target_bed   : ${params.target_bed}
  """
 
 /*
