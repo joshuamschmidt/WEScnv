@@ -1,5 +1,5 @@
-process CNVKIT_REFERENCE {
-    tag "$fasta"
+process CNVKIT_TARGET {
+    tag "$meta.id"
     label 'process_low'
 
     conda "bioconda::cnvkit=0.9.9 bioconda::samtools=1.16.1"
@@ -8,29 +8,27 @@ process CNVKIT_REFERENCE {
         'quay.io/biocontainers/cnvkit:0.9.9--pyhdfd78af_0' }"
 
     input:
-    path fasta
-    path targets
-    path antitargets
+    tuple val(meta), path(baits)
+    tuple val(meta2), path(annotation)
 
     output:
-    path "*.cnn"       , emit: cnn
-    path "versions.yml", emit: versions
+    tuple val(meta), path("*.bed"), emit: bed
+    path "versions.yml"           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: targets.BaseName
-
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def annotate_cmd = annotation ? "--annotate $annotation" : ""
     """
     cnvkit.py \\
-        reference \\
-        --fasta $fasta \\
-        --targets $targets \\
-        --antitargets $antitargets \\
-        --output ${prefix}.reference.cnn \\
-        $args
+        target \\
+        $baits \\
+        $annotate_cmd \\
+        $args \\
+        --output ${prefix}.bed
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

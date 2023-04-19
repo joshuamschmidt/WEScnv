@@ -1,8 +1,8 @@
-name: cnvkit_antitarget
-description: Derive off-target (“antitarget”) bins from target regions.
+name: cnvkit_target
+description: Transform bait intervals into targets more suitable for CNVkit.
 keywords:
-  - cvnkit
-  - antitarget
+  - cnvkit
+  - target
   - cnv
   - copy number
 tools:
@@ -22,10 +22,22 @@ input:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - targets:
+
+  - baits:
       type: file
-      description: File containing genomic regions
+      description: BED or interval file listing the targeted regions.
       pattern: "*.{bed}"
+
+  - meta2:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', single_end:false ]
+
+  - annotation:
+      type: file
+      description: Use gene models from this file to assign names to the target regions.
+      pattern: "*.{txt,bed,gff3,pil}"
 
 output:
   - meta:
@@ -33,14 +45,16 @@ output:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
+
   - bed:
       type: file
-      description: File containing off-target regions
+      description: File containing target regions
       pattern: "*.{bed}"
+
   - versions:
       type: file
       description: File containing software versions
       pattern: "versions.yml"
 
 authors:
-  - "@SusiJo"
+  - "@adamrtalbot"
