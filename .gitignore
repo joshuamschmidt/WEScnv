@@ -6,8 +6,14 @@ exome_design/20160622.allChr.mask.bed
 results/
 work/
 qc/
+test_data/*
+assets/Homo_sapiens_assembly38.fasta.fai
+assets/Homo_sapiens_assembly38.fasta
 results-initial.tar.gz
 inputFiles.txt
 .nextflow/
 .nextflow*
 .DS_Store
+test.nf
+testlist.txt
+testlist2.txt

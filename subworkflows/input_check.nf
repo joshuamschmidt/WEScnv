@@ -22,7 +22,7 @@ workflow INPUT_CHECK {
 
 
     emit:
-    alignments // channel: [ val(meta), [ aln, index ] ]
+    alignments // channel: [ val(meta), aln, index ]
     // TODO versions = SAMPLESHEET_CHECK.out.versions // channel: [ versions.yml ]
 }
 
@@ -40,7 +40,7 @@ def create_aln_channel(LinkedHashMap row) {
         exit 1, "ERROR: Please check input samplesheet -> Alignment file (bam/cram) file does not exist!\n${row.sample_aln}"
     }
     if (file(row.sample_index).exists()) {
-        aln_meta = [ meta, [ file(row.sample_aln), file(row.sample_index) ] ]
+        aln_meta = [ meta, file(row.sample_aln), file(row.sample_index) ]
     } else {
         exit 1, "ERROR: Please check input samplesheet -> Index file does not exist!\n${row.sample_index}"
         }
