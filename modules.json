@@ -1,28 +1,37 @@
 {
-    "name": "",
-    "homePage": "",
-    "repos": {
-        "https://github.com/nf-core/modules.git": {
-            "modules": {
-                "nf-core": {
-                    "cnvkit/antitarget": {
-                        "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
-                    },
-                    "cnvkit/reference": {
-                        "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
-                    },
-                    "manta/germline": {
-                        "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
-                    },
-                    "mosdepth": {
-                        "branch": "master",
-                        "git_sha": "5e34754d42cd2d5d248ca8673c0a53cdf5624905"
-                    }
-                }
-            }
+  "name": "",
+  "homePage": "",
+  "repos": {
+    "https://github.com/nf-core/modules.git": {
+      "modules": {
+        "nf-core": {
+          "cnvkit/antitarget": {
+            "branch": "master",
+            "git_sha": "2f398a6342db61e7ab0f4cb4d395eed74b65db7c",
+            "installed_by": ["modules"]
+          },
+          "cnvkit/reference": {
+            "branch": "master",
+            "git_sha": "2f398a6342db61e7ab0f4cb4d395eed74b65db7c",
+            "installed_by": ["modules"]
+          },
+          "cnvkit/target": {
+            "branch": "master",
+            "git_sha": "2f398a6342db61e7ab0f4cb4d395eed74b65db7c",
+            "installed_by": ["modules"]
+          },
+          "manta/germline": {
+            "branch": "master",
+            "git_sha": "c8e35eb2055c099720a75538d1b8adb3fb5a464c",
+            "installed_by": ["modules"]
+          },
+          "mosdepth": {
+            "branch": "master",
+            "git_sha": "783cc040350dbee673fd57f6a6300aea3d085b7c",
+            "installed_by": ["modules"]
+          }
         }
+      }
     }
+  }
 }

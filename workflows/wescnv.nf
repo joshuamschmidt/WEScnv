@@ -20,17 +20,9 @@ if (params.input) { ch_input = file(params.input) } else { exit 1, 'Input sample
     IMPORT LOCAL MODULES/SUBWORKFLOWS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
-//include { INPUT_CHECK    } from '../subworkflows/input_check'
+include { INPUT_CHECK    } from '../subworkflows/input_check'
 include { PARTITIONGS    } from '../modules/local/partition'
-include { SPLITGS        } from '../modules/local/split_gs'
-include { MAKEPFB        } from '../modules/local/make_pfb'
-include { PENNCNV_GC     } from '../modules/local/penn_gc'
-include { PENNCNV_DETECT } from '../modules/local/penn_detect'
-include { PENNCNV_MERGE  } from '../modules/local/penn_merge'
-include { CONCATENATE_PENN_CALLS  } from '../modules/local/concatenate_penn_calls.nf'
-include { CONCATENATE_PENN_LOGS   } from '../modules/local/concatenate_penn_logs.nf'
-include { PENNCNV_FILTER     } from '../modules/local/penn_filter.nf'
-include { CONCATENATE_PARTITIONS } from '../modules/local/concatenate_partitions.nf'
+
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -40,6 +32,7 @@ include { CONCATENATE_PARTITIONS } from '../modules/local/concatenate_partitions
 workflow ACNE {
 
     INPUT_CHECK( ch_input )
+
 
 
     // big GS files can be partitioned for efficiency
